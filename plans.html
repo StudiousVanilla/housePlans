@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>House Plan — Ground Floor (mm)</title>
+<style>
+  :root {
+    --ink:#1f3a5f; --ext:#1f3a5f; --int:#c2410c; --stair:#0e7490;
+    --fill:#eef3fb; --stairfill:#e0f2f7; --storefill:#fdf0e6;
+    --muted:#6b7a90; --bg:#ffffff;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:#f5f6f8; padding:24px; }
+  .sheet { max-width:1000px; margin:0 auto; background:var(--bg); border:1px solid #d9dee6; border-radius:10px; padding:28px 28px 34px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  h1 { font-size:20px; margin:0 0 2px; }
+  .sub { color:var(--muted); font-size:13px; margin:0 0 14px; }
+  #infobar { background:#f0f4fa; border:1px solid #d9e2f0; border-radius:8px; padding:10px 14px; font-size:13.5px; margin:14px 0 16px; align-items:center; }
+  #selinfo { color:#9a3412; font-weight:700; }
+  #infobar .hint { color:var(--muted); font-weight:400; font-size:12px; }
+  .layout { display:flex; gap:28px; flex-wrap:wrap; align-items:flex-start; }
+  svg { flex:0 0 auto; }
+  .ext { fill:none; stroke:var(--ext); stroke-width:4; stroke-linejoin:miter; }
+  .int { fill:none; stroke:var(--int); stroke-width:2.5; stroke-dasharray:7 4; }
+  .stairline { fill:none; stroke:var(--stair); stroke-width:1.8; stroke-dasharray:5 4; }
+  .tread { stroke:var(--stair); stroke-width:1; opacity:.55; }
+  .doorline { stroke:#2e8b2e; stroke-width:4; stroke-linecap:butt; }
+  .leaf { stroke:#2e8b2e; stroke-width:2; opacity:.25; }
+  .swing { fill:none; stroke:#2e8b2e; stroke-width:1.3; stroke-dasharray:4 4; opacity:.25; }
+  .dim { stroke:var(--muted); stroke-width:1; }
+  .extn { stroke:var(--muted); stroke-width:.8; opacity:.7; }
+  .tick { stroke:var(--muted); stroke-width:1.4; }
+  text { fill:var(--ink); font-size:12px; }
+  .dimlabel { fill:var(--muted); font-size:12px; font-weight:600; }
+  .roomlabel { fill:var(--ink); font-size:13px; font-weight:700; text-anchor:middle; }
+  .roomarea { fill:var(--muted); font-size:11px; text-anchor:middle; }
+  .dimg { display:none; }
+  tr[data-dims] { display:none; }
+  tr[data-dims].show { display:table-row; }
+  .tablehint { color:var(--muted); font-size:12px; margin:8px 0 0; }
+  .dimg.show { display:initial; }
+  .hit { stroke:transparent; stroke-width:14; fill:none; cursor:pointer; }
+  .hit:hover { stroke:rgba(255,200,0,.35); }
+  .hit.sel { stroke:rgba(255,150,0,.55); }
+  aside { flex:1 1 250px; min-width:250px; }
+  table { border-collapse:collapse; width:100%; font-size:12.5px; }
+  th, td { text-align:left; padding:5px 8px; border-bottom:1px solid #eceff3; }
+  th { color:var(--muted); font-weight:600; }
+  .legend { margin-top:14px; font-size:12px; color:var(--muted); line-height:1.6; }
+  .sw { display:inline-block; width:26px; height:0; vertical-align:middle; margin-right:6px; }
+  .sw.e { border-top:4px solid var(--ext); }
+  .sw.i { border-top:2.5px dashed var(--int); }
+  .sw.s { border-top:2px dashed var(--stair); }
+  .sw.d { border-top:4px solid #2e8b2e; }
+  .badge { display:inline-block; background:#eefaf0; color:#2e7d3f; border:1px solid #cdeccd; border-radius:4px; padding:1px 6px; font-size:11px; font-weight:600; }
+  .warnbadge { display:inline-block; background:#fff8ec; color:#9a6b0a; border:1px solid #f0dfb8; border-radius:4px; padding:1px 6px; font-size:11px; font-weight:600; }
+  nav.plans { max-width:1000px; margin:0 auto 16px; display:flex; gap:16px; font-size:14px; }
+  nav.plans a { color:#1f5fbf; text-decoration:none; font-weight:600; }
+  #copyjson, #copykjson { background:#fff; border:1px solid #c7d0dc; border-radius:6px; padding:4px 12px; font-size:12.5px; font-weight:600; color:#1f3a5f; cursor:pointer; }
+  #copyjson { margin-left:auto; }
+  #copyjson:hover, #copykjson:hover { background:#f0f4fa; }
+  .sheet + nav.plans, .sheet { margin-bottom:24px; }
+  .win { stroke:#1f6fb0; stroke-width:1.6; }
+  .ghost { fill:#ececf2; stroke:#9aa0b0; stroke-dasharray:4 3; stroke-width:1; }
+  .zone { fill:rgba(31,111,176,0); cursor:pointer; }
+  .zone:hover { fill:rgba(31,111,176,.08); }
+  .zone.zsel { fill:rgba(31,111,176,.18); }
+  #kelev-wrap { margin-top:10px; border:1px solid #e3e8ef; border-radius:8px; padding:14px; background:#fbfcfe; min-height:120px; }
+  #kelev-wrap h3 { margin:0 0 8px; font-size:14px; }
+  #kelev-wrap .hintline { color:var(--muted); font-size:12px; margin:0; }
+  .sheet { position:relative; }
+  .sheethead { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .sheethead h1 { margin:0; }
+  .rose { flex:0 0 auto; }
+  #plan, #kplan { width:100%; height:auto; }
+  #plan { max-width:560px; }
+  #kplan { max-width:640px; }
+  #kelev svg { width:100%; height:auto; }
+  @media (max-width:700px) {
+    body { padding:10px; }
+    .sheet { padding:16px 14px 22px; }
+    h1 { font-size:17px; }
+    .rose { width:56px; height:56px; }
+    nav.plans { flex-wrap:wrap; gap:10px 14px; }
+    #copyjson { margin-left:0; }
+    .layout { gap:16px; }
+    th, td { padding:4px 6px; }
+  }
+  @media (pointer:coarse) {
+    .hit { stroke-width:26; }
+  }
+  .rose text { font-size:11px; font-weight:700; letter-spacing:.06em; fill:#6b7a90; }
+  .rose .s { fill:#b23b3b; }
+</style>
+</head>
+<body>
+<nav class="plans"><a href="#house">Ground floor</a><a href="#kitchen">Kitchen (middle + lower combined)</a><button id="copyjson" type="button">Copy measurements JSON</button><button id="copykjson" type="button">Copy kitchen JSON</button></nav>
+<div class="sheet" id="house">
+  <div class="sheethead">
+  <h1>House Plan — Ground Floor</h1>
+  <svg class="rose" width="74" height="74" viewBox="0 0 100 100" aria-label="Compass — top of drawing is due south">
+    <circle cx="50" cy="50" r="35" fill="#fff" stroke="#c7d0dc" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="#e4e9f0" stroke-width="1"/>
+    <g fill="#94a1b3">
+      <polygon points="50,50 61,39 58.2,46.8"/>
+      <polygon points="50,50 61,61 53.2,58.2"/>
+      <polygon points="50,50 39,61 41.8,53.2"/>
+      <polygon points="50,50 39,39 46.8,41.8"/>
+    </g>
+    <polygon points="50,17 55.5,50 50,50" fill="#b23b3b"/>
+    <polygon points="50,17 44.5,50 50,50" fill="#d98080"/>
+    <polygon points="50,83 44.5,50 50,50" fill="#1f3a5f"/>
+    <polygon points="50,83 55.5,50 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,45.2 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,54.8 50,50" fill="#1f3a5f"/>
+    <polygon points="80,50 50,54.8 50,50" fill="#8fa1bb"/>
+    <polygon points="80,50 50,45.2 50,50" fill="#1f3a5f"/>
+    <circle cx="50" cy="50" r="2.6" fill="#fff" stroke="#1f3a5f" stroke-width="1.4"/>
+    <text class="s" x="50" y="10" text-anchor="middle">S</text>
+    <text x="50" y="97" text-anchor="middle">N</text>
+    <text x="7" y="54" text-anchor="middle">E</text>
+    <text x="93" y="54" text-anchor="middle">W</text>
+  </svg>
+  </div>
+  <div id="infobar" style="display:none">
+    <span id="selinfo"></span>
+  </div>
+
+  <div class="layout">
+    <!-- mm→px: x*0.075+110, y*0.075+70. house 4200 wide, straight right wall -->
+    <svg id="plan" width="560" height="940" viewBox="0 0 560 940" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Room fills -->
+      <rect x="110" y="70"  width="247.5" height="376.5" fill="var(--fill)"/>
+      <rect x="110" y="446.5" width="315" height="137.25" fill="var(--fill)"/>
+      <rect x="357.5" y="421.75" width="67.5" height="24.75" fill="var(--fill)"/>
+      <rect x="140" y="583.75" width="285" height="285" fill="var(--fill)"/>
+      <polygon points="328.25,70 425,70 425,360.25 357.5,360.25 357.5,156.25 328.25,156.25" fill="var(--stairfill)"/>
+      <rect x="357.5" y="360.25" width="67.5" height="61.5" fill="var(--storefill)"/>
+
+      <!-- Stair treads (250 mm) -->
+      <g class="tread">
+        <line x1="357.5" y1="175"    x2="425" y2="175"/>
+        <line x1="357.5" y1="193.75" x2="425" y2="193.75"/>
+        <line x1="357.5" y1="212.5"  x2="425" y2="212.5"/>
+        <line x1="357.5" y1="231.25" x2="425" y2="231.25"/>
+        <line x1="357.5" y1="250"    x2="425" y2="250"/>
+        <line x1="357.5" y1="268.75" x2="425" y2="268.75"/>
+        <line x1="357.5" y1="287.5"  x2="425" y2="287.5"/>
+        <line x1="357.5" y1="306.25" x2="425" y2="306.25"/>
+        <line x1="357.5" y1="325"    x2="425" y2="325"/>
+        <line x1="357.5" y1="343.75" x2="425" y2="343.75"/>
+      </g>
+      <line x1="391.25" y1="185" x2="391.25" y2="330" stroke="var(--stair)" stroke-width="1.6"/>
+      <polygon points="391.25,345 386,330 396.5,330" fill="var(--stair)"/>
+
+      <polygon class="stairline" points="328.25,70 425,70 425,360.25 357.5,360.25 357.5,156.25 328.25,156.25"/>
+
+      <!-- External walls: straight right wall, door gap in bottom wall -->
+      <path class="ext" d="M110,70 H425 V868.75 H399.5 M342.5,868.75 H140 V583.75 H110 V70"/>
+
+      <!-- Internal walls -->
+      <line class="int" x1="110"   y1="446.5" x2="293" y2="446.5"/>
+      <line class="int" x1="351.5" y1="446.5" x2="357.5" y2="446.5"/>
+      <line class="int" x1="357.5" y1="421.75" x2="425" y2="421.75"/>
+      <line class="int" x1="140" y1="583.75" x2="425" y2="583.75"/>
+      <line class="int" x1="357.5" y1="156.25" x2="357.5" y2="360.25"/>
+      <line class="int" x1="357.5" y1="421.75" x2="357.5" y2="446.5"/>
+      <line class="int" x1="328.25" y1="70"     x2="328.25" y2="85"/>
+      <line class="int" x1="328.25" y1="141.25" x2="328.25" y2="156.25"/>
+      <line class="int" x1="328.25" y1="156.25" x2="357.5"  y2="156.25"/>
+
+      <!-- Doors (green lines) -->
+      <line class="doorline" x1="328.25" y1="85"     x2="328.25" y2="141.25"/>
+      <line class="doorline" x1="293"    y1="446.5"  x2="351.5"  y2="446.5"/>
+      <line class="doorline" x1="357.5"  y1="360.25" x2="357.5"  y2="421.75"/>
+      <line class="doorline" x1="342.5" y1="868.75" x2="399.5" y2="868.75"/>
+
+      <!-- Door swings -->
+      <g pointer-events="none">
+        <line class="leaf" x1="328.25" y1="85" x2="272" y2="85"/>
+        <path class="swing" d="M272,85 A56.25,56.25 0 0 0 328.25,141.25"/>
+        <line class="leaf" x1="357.5" y1="421.75" x2="296" y2="421.75"/>
+        <path class="swing" d="M296,421.75 A61.5,61.5 0 0 1 357.5,360.25"/>
+        <line class="leaf" x1="351.5" y1="446.5" x2="351.5" y2="505"/>
+        <path class="swing" d="M351.5,505 A58.5,58.5 0 0 1 293,446.5"/>
+        <line class="leaf" x1="399.5" y1="868.75" x2="399.5" y2="925.75"/>
+        <path class="swing" d="M399.5,925.75 A57,57 0 0 1 342.5,868.75"/>
+      </g>
+
+      <!-- Room labels -->
+      <text class="roomlabel" x="228" y="250">Upper room</text>
+      <text class="roomarea"  x="228" y="266">16.12 m&sup2; usable</text>
+      <text class="roomlabel" x="267" y="510">Middle room</text>
+      <text class="roomarea"  x="267" y="526">7.98 m&sup2;</text>
+      <text class="roomlabel" x="282" y="720">Lower room</text>
+      <text class="roomarea"  x="282" y="736">14.44 m&sup2;</text>
+
+      <!-- ================= DIMENSIONS ================= -->
+      <!-- Top -->
+      <g class="dimg" id="d-top">
+        <line class="extn" x1="110"    y1="66" x2="110"    y2="42"/>
+        <line class="extn" x1="328.25" y1="66" x2="328.25" y2="30"/>
+        <line class="extn" x1="357.5"  y1="66" x2="357.5"  y2="30"/>
+        <line class="extn" x1="425" y1="66" x2="425" y2="42"/>
+        <line class="dim" x1="110" y1="48" x2="328.25" y2="48"/>
+        <line class="tick" x1="106" y1="52" x2="114" y2="44"/>
+        <line class="tick" x1="324.25" y1="52" x2="332.25" y2="44"/>
+        <text class="dimlabel" x="219" y="43" text-anchor="middle">2910</text>
+        <line class="dim" x1="328.25" y1="36" x2="357.5" y2="36"/>
+        <line class="tick" x1="324.25" y1="40" x2="332.25" y2="32"/>
+        <line class="tick" x1="353.5" y1="40" x2="361.5" y2="32"/>
+        <text class="dimlabel" x="336" y="28" text-anchor="middle">390</text>
+        <line class="dim" x1="357.5" y1="48" x2="425" y2="48"/>
+        <line class="tick" x1="353.5" y1="52" x2="361.5" y2="44"/>
+        <line class="tick" x1="421" y1="52" x2="429" y2="44"/>
+        <text class="dimlabel" x="391.25" y="43" text-anchor="middle">900</text>
+        <line class="dim" x1="328.25" y1="148" x2="425" y2="148"/>
+        <line class="tick" x1="324.25" y1="152" x2="332.25" y2="144"/>
+        <line class="tick" x1="421" y1="152" x2="429" y2="144"/>
+        <text class="dimlabel" x="376.6" y="143" text-anchor="middle">1290 landing</text>
+      </g>
+
+      <!-- Left -->
+      <g class="dimg" id="d-left">
+        <line class="extn" x1="106" y1="70"     x2="82" y2="70"/>
+        <line class="extn" x1="106" y1="446.5"  x2="82" y2="446.5"/>
+        <line class="extn" x1="106" y1="583.75" x2="82" y2="583.75"/>
+        <line class="dim" x1="88" y1="70" x2="88" y2="446.5"/>
+        <line class="tick" x1="84" y1="74" x2="92" y2="66"/>
+        <line class="tick" x1="84" y1="450.5" x2="92" y2="442.5"/>
+        <text class="dimlabel" x="83" y="258" text-anchor="middle" transform="rotate(-90 83 258)">5020</text>
+        <line class="dim" x1="88" y1="446.5" x2="88" y2="583.75"/>
+        <line class="tick" x1="84" y1="587.75" x2="92" y2="579.75"/>
+        <text class="dimlabel" x="83" y="515" text-anchor="middle" transform="rotate(-90 83 515)">1830</text>
+      </g>
+
+      <!-- Lower-left -->
+      <g class="dimg" id="d-lowleft">
+        <line class="extn" x1="136" y1="583.75" x2="112" y2="583.75"/>
+        <line class="extn" x1="136" y1="868.75" x2="112" y2="868.75"/>
+        <line class="dim" x1="118" y1="583.75" x2="118" y2="868.75"/>
+        <line class="tick" x1="114" y1="587.75" x2="122" y2="579.75"/>
+        <line class="tick" x1="114" y1="872.75" x2="122" y2="864.75"/>
+        <text class="dimlabel" x="113" y="726" text-anchor="middle" transform="rotate(-90 113 726)">3800</text>
+        <line class="dim" x1="110" y1="597" x2="140" y2="597"/>
+        <line class="tick" x1="106" y1="601" x2="114" y2="593"/>
+        <line class="tick" x1="136" y1="601" x2="144" y2="593"/>
+        <text class="dimlabel" x="125" y="612" text-anchor="middle">400</text>
+      </g>
+
+      <!-- Right -->
+      <g class="dimg" id="d-right">
+        <line class="extn" x1="429" y1="70"     x2="453" y2="70"/>
+        <line class="extn" x1="429" y1="421.75" x2="453" y2="421.75"/>
+        <line class="extn" x1="429" y1="583.75" x2="453" y2="583.75"/>
+        <line class="extn" x1="429" y1="868.75" x2="453" y2="868.75"/>
+        <line class="dim" x1="447" y1="70" x2="447" y2="421.75"/>
+        <line class="tick" x1="443" y1="74" x2="451" y2="66"/>
+        <line class="tick" x1="443" y1="425.75" x2="451" y2="417.75"/>
+        <text class="dimlabel" x="459" y="246" text-anchor="middle" transform="rotate(-90 459 246)">4690</text>
+        <line class="dim" x1="447" y1="421.75" x2="447" y2="583.75"/>
+        <line class="tick" x1="443" y1="587.75" x2="451" y2="579.75"/>
+        <text class="dimlabel" x="459" y="503" text-anchor="middle" transform="rotate(-90 459 503)">2160</text>
+        <line class="dim" x1="447" y1="583.75" x2="447" y2="868.75"/>
+        <line class="tick" x1="443" y1="872.75" x2="451" y2="864.75"/>
+        <text class="dimlabel" x="459" y="726" text-anchor="middle" transform="rotate(-90 459 726)">3800</text>
+      </g>
+
+      <!-- Bottom -->
+      <g class="dimg" id="d-bottom">
+        <line class="extn" x1="425" y1="872.75" x2="425" y2="910"/>
+        <line class="dim" x1="140" y1="852" x2="425" y2="852"/>
+        <line class="tick" x1="136" y1="856" x2="144" y2="848"/>
+        <line class="tick" x1="421" y1="856" x2="429" y2="848"/>
+        <text class="dimlabel" x="282" y="847" text-anchor="middle">3800</text>
+        <line class="extn" x1="399.5" y1="872.75" x2="399.5" y2="910"/>
+        <line class="dim" x1="399.5" y1="905" x2="425" y2="905"/>
+        <line class="tick" x1="395.5" y1="909" x2="403.5" y2="901"/>
+        <line class="tick" x1="421" y1="909" x2="429" y2="901"/>
+        <text class="dimlabel" x="440" y="909">340</text>
+      </g>
+
+      <!-- Internal 3300 -->
+      <g class="dimg" id="d-3300">
+        <line class="extn" x1="110" y1="446.5" x2="110" y2="429"/>
+        <line class="dim" x1="110" y1="433" x2="357.5" y2="433"/>
+        <line class="tick" x1="106" y1="437" x2="114" y2="429"/>
+        <line class="tick" x1="353.5" y1="437" x2="361.5" y2="429"/>
+        <text class="dimlabel" x="230" y="428" text-anchor="middle">3300</text>
+      </g>
+
+      <!-- Internal 4200 -->
+      <g class="dimg" id="d-4200">
+        <line class="dim" x1="110" y1="572" x2="425" y2="572"/>
+        <line class="tick" x1="106" y1="576" x2="114" y2="568"/>
+        <line class="tick" x1="421" y1="576" x2="429" y2="568"/>
+        <text class="dimlabel" x="230" y="567" text-anchor="middle">4200</text>
+      </g>
+
+      <!-- 450 stub -->
+      <g class="dimg" id="d-2440">
+        <line class="extn" x1="293" y1="450.5" x2="293" y2="463"/>
+        <line class="dim" x1="110" y1="459" x2="293" y2="459"/>
+        <line class="tick" x1="106" y1="463" x2="114" y2="455"/>
+        <line class="tick" x1="289" y1="463" x2="297" y2="455"/>
+        <text class="dimlabel" x="201.5" y="471" text-anchor="middle">2440</text>
+        <line class="extn" x1="351.5" y1="450.5" x2="351.5" y2="463"/>
+        <line class="dim" x1="293" y1="459" x2="351.5" y2="459"/>
+        <line class="tick" x1="347.5" y1="463" x2="355.5" y2="455"/>
+        <text class="dimlabel" x="322.25" y="471" text-anchor="middle">780</text>
+      </g>
+      <g class="dimg" id="d-stair">
+        <line class="dim" x1="349" y1="156.25" x2="349" y2="360.25"/>
+        <line class="tick" x1="345" y1="160.25" x2="353" y2="152.25"/>
+        <line class="tick" x1="345" y1="364.25" x2="353" y2="356.25"/>
+        <text class="dimlabel" x="341" y="262" text-anchor="end">2720</text>
+      </g>
+      <g class="dimg" id="d-foot">
+        <line class="dim" x1="320" y1="70" x2="320" y2="85"/>
+        <text class="dimlabel" x="314" y="81" text-anchor="end">200</text>
+        <line class="dim" x1="320" y1="85" x2="320" y2="141.25"/>
+        <text class="dimlabel" x="314" y="117" text-anchor="end">750</text>
+        <line class="dim" x1="320" y1="141.25" x2="320" y2="156.25"/>
+        <text class="dimlabel" x="314" y="153" text-anchor="end">200</text>
+        <line class="extn" x1="324.25" y1="85" x2="316" y2="85"/>
+        <line class="extn" x1="324.25" y1="141.25" x2="316" y2="141.25"/>
+        <line class="extn" x1="324.25" y1="156.25" x2="316" y2="156.25"/>
+      </g>
+      <g class="dimg" id="d-820">
+        <line class="extn" x1="357.5" y1="360.25" x2="345" y2="360.25"/>
+        <line class="dim" x1="349" y1="360.25" x2="349" y2="421.75"/>
+        <line class="tick" x1="345" y1="364.25" x2="353" y2="356.25"/>
+        <line class="tick" x1="345" y1="425.75" x2="353" y2="417.75"/>
+        <text class="dimlabel" x="341" y="394" text-anchor="end">820</text>
+      </g>
+      <g class="dimg" id="d-330">
+        <line class="extn" x1="357.5" y1="421.75" x2="345" y2="421.75"/>
+        <line class="dim" x1="349" y1="421.75" x2="349" y2="446.5"/>
+        <line class="tick" x1="345" y1="425.75" x2="353" y2="417.75"/>
+        <line class="tick" x1="345" y1="450.5" x2="353" y2="442.5"/>
+        <text class="dimlabel" x="341" y="437" text-anchor="end">330</text>
+        <line class="dim" x1="357.5" y1="430" x2="425" y2="430"/>
+        <line class="tick" x1="353.5" y1="434" x2="361.5" y2="426"/>
+        <line class="tick" x1="421" y1="434" x2="429" y2="426"/>
+        <text class="dimlabel" x="391.25" y="442" text-anchor="middle">900</text>
+      </g>
+
+      <!-- ================= INTERACTIVE HIT AREAS ================= -->
+      <g id="hits">
+        <line class="hit" data-name="Top wall" data-dims="d-top" data-len="4200" x1="110" y1="70" x2="425" y2="70"/>
+        <line class="hit" data-name="Left wall — upper room" data-dims="d-left" data-len="5020" x1="110" y1="70" x2="110" y2="446.5"/>
+        <line class="hit" data-name="Left wall — middle room" data-dims="d-left" data-len="1830" x1="110" y1="446.5" x2="110" y2="583.75"/>
+        <line class="hit" data-name="Left inset" data-dims="d-lowleft" data-len="400" x1="110" y1="583.75" x2="140" y2="583.75"/>
+        <line class="hit" data-name="Left wall — lower room" data-dims="d-lowleft" data-len="3800" x1="140" y1="583.75" x2="140" y2="868.75"/>
+        <line class="hit" data-name="Bottom wall (incl. 760 door)" data-dims="d-bottom" data-len="3800" x1="140" y1="868.75" x2="425" y2="868.75"/>
+        <line class="hit" data-name="Right wall — upper room (to jut)" data-dims="d-right" data-len="4690" x1="425" y1="70" x2="425" y2="421.75"/>
+        <line class="hit" data-name="Right wall — middle room (incl. jut)" data-dims="d-right" data-len="2160" x1="425" y1="421.75" x2="425" y2="583.75"/>
+        <line class="hit" data-name="Right wall — lower room" data-dims="d-right" data-len="3800" x1="425" y1="583.75" x2="425" y2="868.75"/>
+        <line class="hit" data-name="Internal wall upper/middle (incl. 780 door)" data-dims="d-3300 d-2440" data-len="3300" x1="110" y1="446.5" x2="357.5" y2="446.5"/>
+        <line class="hit" data-name="Middle room jut — south wall" data-dims="d-330" data-len="900" x1="357.5" y1="421.75" x2="425" y2="421.75"/>
+        <line class="hit" data-name="Internal wall middle/lower" data-dims="d-4200" data-len="3800" x1="140" y1="583.75" x2="425" y2="583.75"/>
+        <line class="hit" data-name="Stairwell wall" data-dims="d-top d-stair" data-len="2720" x1="357.5" y1="156.25" x2="357.5" y2="360.25"/>
+        <line class="hit" data-name="Foot-of-stairs wall (incl. 750 door)" data-dims="d-top d-foot" data-len="1150" x1="328.25" y1="70" x2="328.25" y2="156.25"/>
+        <line class="hit" data-name="Foot-of-stairs jog" data-dims="d-top" data-len="390" x1="328.25" y1="156.25" x2="357.5" y2="156.25"/>
+        <line class="hit" data-name="Middle room jut — east wall" data-dims="d-330" data-len="330" x1="357.5" y1="421.75" x2="357.5" y2="446.5"/>
+        <line class="hit" data-name="Storage door" data-dims="d-330 d-820" data-len="820" x1="357.5" y1="360.25" x2="357.5" y2="421.75"/>
+        <line class="hit" data-name="Door — upper to middle room" data-dims="d-3300 d-2440" data-len="780" x1="293" y1="446.5" x2="351.5" y2="446.5"/>
+        <line class="hit" data-name="Door — foot of stairs" data-dims="d-foot" data-len="750" x1="328.25" y1="85" x2="328.25" y2="141.25"/>
+        <line class="hit" data-name="Door — lower room exit" data-dims="d-bottom" data-len="760" x1="342.5" y1="868.75" x2="399.5" y2="868.75"/>
+      </g>
+    </svg>
+
+    <aside>
+      <table id="gtable" style="display:none">
+        <tr><th>Ref</th><th>Measures</th><th>mm</th></tr>
+        <tr data-dims="d-top"><td>2910</td><td>Top wall: left corner &rarr; foot-of-stairs wall</td><td>2910</td></tr>
+        <tr data-dims="d-top"><td>390</td><td>Foot-of-stairs jog (tape: ~40 cm)</td><td>390</td></tr>
+        <tr data-dims="d-top"><td>900</td><td>Stairwell width (incl. 70 straightening)</td><td>900</td></tr>
+        <tr data-dims="d-top"><td>1290</td><td>Landing total: jog + stairwell</td><td>1290</td></tr>
+        <tr data-dims="d-left"><td>5020</td><td>Upper room, left wall</td><td>5020</td></tr>
+        <tr data-dims="d-right"><td>4690</td><td>Right wall: upper room to jut</td><td>4690</td></tr>
+        <tr data-dims="d-3300"><td>3300</td><td>Internal wall, upper &rarr; middle</td><td>3300</td></tr>
+        <tr data-dims="d-2440"><td>2440</td><td>East wall &rarr; door, along upper/middle wall</td><td>2440</td></tr>
+        <tr data-dims="d-2440"><td>780</td><td>Door, upper &rarr; middle room</td><td>780</td></tr>
+        <tr data-dims="d-stair"><td>2720</td><td>Stairwell wall, jog &rarr; storage</td><td>2720</td></tr>
+        <tr data-dims="d-foot"><td>200</td><td>Top wall &rarr; stair-foot door</td><td>200</td></tr>
+        <tr data-dims="d-foot"><td>750</td><td>Door at foot of stairs</td><td>750</td></tr>
+        <tr data-dims="d-foot"><td>200</td><td>Stair-foot door &rarr; jog wall</td><td>200</td></tr>
+        <tr data-dims="d-4200"><td>4200</td><td>Middle room width</td><td>4200</td></tr>
+        <tr data-dims="d-left"><td>1830</td><td>Middle room depth (left side)</td><td>1830</td></tr>
+        <tr data-dims="d-right"><td>2160</td><td>Right wall: middle room incl. jut (330 + 1830)</td><td>2160</td></tr>
+        <tr data-dims="d-right"><td>3800</td><td>Right wall: lower room</td><td>3800</td></tr>
+        <tr data-dims="d-lowleft d-bottom d-4200"><td>3800</td><td>Lower room, width &amp; depth</td><td>3800</td></tr>
+        <tr data-dims="d-lowleft"><td>400</td><td>Lower room left inset</td><td>400</td></tr>
+        <tr data-dims="d-820"><td>820</td><td>Storage door (full storage side)</td><td>820</td></tr>
+        <tr data-dims="d-330"><td>330</td><td>Middle room jut, depth south along west wall</td><td>330</td></tr>
+        <tr data-dims="d-330"><td>900</td><td>Middle room jut, width (full storage width)</td><td>900</td></tr>
+        <tr data-dims="d-bottom"><td>340</td><td>Lower room door offset from bottom-right (west) corner</td><td>340</td></tr>
+      </table>
+
+      <div class="legend">
+        <p>
+          <span class="sw e"></span>External wall<br>
+          <span class="sw i"></span>Internal wall<br>
+          <span class="sw s"></span>Stairwell (unusable on ground floor)<br>
+          <span class="sw d"></span>Door opening
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function () {
+  var sel = document.getElementById('selinfo');
+  var svg = document.getElementById('plan');
+  var hits = Array.prototype.slice.call(document.querySelectorAll('.hit'));
+  var selected = [];
+
+  function fmt(mm) {
+    return mm.toLocaleString('en-IE') + ' mm (' + (mm / 10) + ' cm)';
+  }
+  function updateSel() {
+    document.getElementById('infobar').style.display = selected.length ? '' : 'none';
+    if (!selected.length) { sel.textContent = ''; return; }
+    var total = selected.reduce(function (s, el) { return s + Number(el.dataset.len); }, 0);
+    sel.textContent = selected.length === 1
+      ? 'Selected: ' + selected[0].dataset.name + ' — ' + fmt(total)
+      : 'Selected ' + selected.length + ' walls — total ' + fmt(total);
+  }
+  function syncDims() {
+    var ids = {};
+    document.querySelectorAll('#plan .dimg').forEach(function (g) { g.classList.remove('show'); });
+    selected.forEach(function (el) {
+      (el.dataset.dims || '').split(' ').forEach(function (id) {
+        ids[id] = 1;
+        var g = document.getElementById(id);
+        if (g) g.classList.add('show');
+      });
+    });
+    document.querySelectorAll('#house tr[data-dims]').forEach(function (tr) {
+      var on = tr.dataset.dims.split(' ').some(function (id) { return ids[id]; });
+      tr.classList.toggle('show', on);
+    });
+    document.getElementById('gtable').style.display = selected.length ? '' : 'none';
+  }
+  function clearSel() {
+    selected.forEach(function (el) { el.classList.remove('sel'); });
+    selected = [];
+    updateSel();
+    syncDims();
+  }
+
+  hits.forEach(function (el) {
+    el.addEventListener('mouseenter', function () {
+      (el.dataset.dims || '').split(' ').forEach(function (id) {
+        var g = document.getElementById(id);
+        if (g) g.classList.add('show');
+      });
+    });
+    el.addEventListener('mouseleave', function () {
+      syncDims();
+    });
+    el.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var multi = e.shiftKey || e.ctrlKey || e.metaKey;
+      var i = selected.indexOf(el);
+      if (multi) {
+        if (i >= 0) { el.classList.remove('sel'); selected.splice(i, 1); }
+        else { el.classList.add('sel'); selected.push(el); }
+      } else if (selected.length === 1 && selected[0] === el) {
+        clearSel();
+      } else {
+        clearSel();
+        el.classList.add('sel');
+        selected.push(el);
+      }
+      updateSel();
+      syncDims();
+    });
+  });
+
+  svg.addEventListener('click', function (e) {
+    if (e.target === svg || e.target.tagName !== 'line' || !e.target.classList.contains('hit')) clearSel();
+  });
+})();
+</script>
+
+<div class="sheet" id="kitchen">
+  <div class="sheethead">
+  <h1>Kitchen — Middle + Lower Rooms Combined</h1>
+  <svg class="rose" width="74" height="74" viewBox="0 0 100 100" aria-label="Compass — top of drawing is due south">
+    <circle cx="50" cy="50" r="35" fill="#fff" stroke="#c7d0dc" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="#e4e9f0" stroke-width="1"/>
+    <g fill="#94a1b3">
+      <polygon points="50,50 61,39 58.2,46.8"/>
+      <polygon points="50,50 61,61 53.2,58.2"/>
+      <polygon points="50,50 39,61 41.8,53.2"/>
+      <polygon points="50,50 39,39 46.8,41.8"/>
+    </g>
+    <polygon points="50,17 55.5,50 50,50" fill="#b23b3b"/>
+    <polygon points="50,17 44.5,50 50,50" fill="#d98080"/>
+    <polygon points="50,83 44.5,50 50,50" fill="#1f3a5f"/>
+    <polygon points="50,83 55.5,50 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,45.2 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,54.8 50,50" fill="#1f3a5f"/>
+    <polygon points="80,50 50,54.8 50,50" fill="#8fa1bb"/>
+    <polygon points="80,50 50,45.2 50,50" fill="#1f3a5f"/>
+    <circle cx="50" cy="50" r="2.6" fill="#fff" stroke="#1f3a5f" stroke-width="1.4"/>
+    <text class="s" x="50" y="10" text-anchor="middle">S</text>
+    <text x="50" y="97" text-anchor="middle">N</text>
+    <text x="7" y="54" text-anchor="middle">E</text>
+    <text x="93" y="54" text-anchor="middle">W</text>
+  </svg>
+  </div>
+
+
+  <div class="layout">
+    <!-- mm→px: x*0.1+100, y*0.1+60. Shell 4200 x 5900 -->
+    <svg id="kplan" width="640" height="740" viewBox="0 0 640 740" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Zone fills (click to sum areas) -->
+      <polygon class="zone" data-a="7.983" data-name="Middle zone incl. jut" points="100,60 430,60 430,27 520,27 520,243 100,243" fill="var(--fill)"/>
+      <rect class="zone" data-a="1.134" data-name="Reclaimed strip 4200×270" x="100" y="243" width="420" height="27" fill="var(--storefill)"/>
+      <rect class="zone" data-a="14.44" data-name="Lower zone 3800×3800" x="140" y="270" width="380" height="380" fill="var(--fill)"/>
+
+      <!-- Ghost of removed wall -->
+      <rect class="ghost" x="100" y="243" width="420" height="27" pointer-events="none" opacity=".5"/>
+
+
+      <!-- External walls (gap for north exit door) -->
+      <path class="ext" d="M100,60 V270 H140 V650 H410 M486,650 H520 V27"/>
+
+      <!-- South wall (internal, door to upper room) -->
+      <line class="ext" x1="100" y1="60" x2="344" y2="60"/>
+      <line class="ext" x1="422" y1="60" x2="430" y2="60"/>
+      <line class="ext" x1="430" y1="27" x2="430" y2="60"/>
+      <line class="ext" x1="430" y1="27" x2="520" y2="27"/>
+
+      <!-- Doors -->
+      <line class="doorline" x1="344" y1="60" x2="422" y2="60"/>
+      <line class="doorline" x1="410" y1="650" x2="486" y2="650"/>
+
+      <!-- Door swings -->
+      <g pointer-events="none">
+        <line class="leaf" x1="422" y1="60" x2="422" y2="138"/>
+        <path class="swing" d="M422,138 A78,78 0 0 1 344,60"/>
+        <line class="leaf" x1="486" y1="650" x2="486" y2="726"/>
+        <path class="swing" d="M486,726 A76,76 0 0 1 410,650"/>
+      </g>
+
+      <!-- Windows on west wall (white break + double line) -->
+      <g>
+        <rect x="515" y="74" width="10" height="112" fill="#fff"/>
+        <line class="win" x1="518" y1="74" x2="518" y2="186"/>
+        <line class="win" x1="522" y1="74" x2="522" y2="186"/>
+        <line class="win" x1="515" y1="74" x2="525" y2="74"/>
+        <line class="win" x1="515" y1="186" x2="525" y2="186"/>
+        <rect x="515" y="368" width="10" height="168" fill="#fff"/>
+        <line class="win" x1="518" y1="368" x2="518" y2="536"/>
+        <line class="win" x1="522" y1="368" x2="522" y2="536"/>
+        <line class="win" x1="515" y1="368" x2="525" y2="368"/>
+        <line class="win" x1="515" y1="536" x2="525" y2="536"/>
+      </g>
+
+
+      <!-- Dimensions (hidden by default; shown for selected wall) -->
+      <g class="dimg" id="d-k4200">
+        <line class="dim" x1="100" y1="78" x2="520" y2="78"/>
+        <line class="tick" x1="96" y1="82" x2="104" y2="74"/>
+        <line class="tick" x1="516" y1="82" x2="524" y2="74"/>
+        <text class="dimlabel" x="310" y="92" text-anchor="middle">4200</text>
+      </g>
+      <g class="dimg" id="d-ksplit">
+        <line class="extn" x1="100" y1="56" x2="100" y2="40"/>
+        <line class="extn" x1="344" y1="56" x2="344" y2="40"/>
+        <line class="extn" x1="422" y1="56" x2="422" y2="40"/>
+        <line class="dim" x1="100" y1="46" x2="344" y2="46"/>
+        <line class="tick" x1="96" y1="50" x2="104" y2="42"/>
+        <line class="tick" x1="340" y1="50" x2="348" y2="42"/>
+        <text class="dimlabel" x="222" y="41" text-anchor="middle">2440</text>
+        <line class="dim" x1="344" y1="46" x2="422" y2="46"/>
+        <line class="tick" x1="418" y1="50" x2="426" y2="42"/>
+        <text class="dimlabel" x="383" y="41" text-anchor="middle">780</text>
+      </g>
+      <g class="dimg" id="d-kjut">
+        <line class="dim" x1="430" y1="40" x2="520" y2="40"/>
+        <line class="tick" x1="426" y1="44" x2="434" y2="36"/>
+        <line class="tick" x1="516" y1="44" x2="524" y2="36"/>
+        <text class="dimlabel" x="475" y="54" text-anchor="middle">900</text>
+        <line class="dim" x1="420" y1="27" x2="420" y2="60"/>
+        <line class="tick" x1="416" y1="31" x2="424" y2="23"/>
+        <line class="tick" x1="416" y1="64" x2="424" y2="56"/>
+        <text class="dimlabel" x="414" y="47" text-anchor="end">330</text>
+      </g>
+      <g class="dimg" id="d-k5900">
+        <line class="dim" x1="504" y1="27" x2="504" y2="650"/>
+        <line class="tick" x1="500" y1="31" x2="508" y2="23"/>
+        <line class="tick" x1="500" y1="654" x2="508" y2="646"/>
+        <text class="dimlabel" x="496" y="360" text-anchor="middle" transform="rotate(-90 496 360)">6230</text>
+      </g>
+      <g class="dimg" id="d-k2100">
+        <line class="extn" x1="96" y1="60" x2="80" y2="60"/>
+        <line class="extn" x1="96" y1="270" x2="80" y2="270"/>
+        <line class="dim" x1="86" y1="60" x2="86" y2="270"/>
+        <line class="tick" x1="82" y1="64" x2="90" y2="56"/>
+        <line class="tick" x1="82" y1="274" x2="90" y2="266"/>
+        <text class="dimlabel" x="81" y="165" text-anchor="middle" transform="rotate(-90 81 165)">2100</text>
+      </g>
+      <g class="dimg" id="d-k3800e">
+        <line class="extn" x1="136" y1="270" x2="120" y2="270"/>
+        <line class="extn" x1="136" y1="650" x2="120" y2="650"/>
+        <line class="dim" x1="126" y1="270" x2="126" y2="650"/>
+        <line class="tick" x1="122" y1="274" x2="130" y2="266"/>
+        <line class="tick" x1="122" y1="654" x2="130" y2="646"/>
+        <text class="dimlabel" x="121" y="460" text-anchor="middle" transform="rotate(-90 121 460)">3800</text>
+      </g>
+      <g class="dimg" id="d-k400">
+        <line class="dim" x1="100" y1="284" x2="140" y2="284"/>
+        <text class="dimlabel" x="98" y="295" text-anchor="end">400</text>
+      </g>
+      <g class="dimg" id="d-k3800n">
+        <line class="dim" x1="140" y1="636" x2="520" y2="636"/>
+        <line class="tick" x1="136" y1="640" x2="144" y2="632"/>
+        <line class="tick" x1="516" y1="640" x2="524" y2="632"/>
+        <text class="dimlabel" x="330" y="631" text-anchor="middle">3800</text>
+        <line class="extn" x1="140" y1="654" x2="140" y2="678"/>
+        <line class="extn" x1="410" y1="654" x2="410" y2="678"/>
+        <line class="extn" x1="486" y1="654" x2="486" y2="678"/>
+        <line class="extn" x1="520" y1="654" x2="520" y2="678"/>
+        <line class="dim" x1="140" y1="672" x2="410" y2="672"/>
+        <line class="tick" x1="136" y1="676" x2="144" y2="668"/>
+        <line class="tick" x1="406" y1="676" x2="414" y2="668"/>
+        <text class="dimlabel" x="275" y="688" text-anchor="middle">2700</text>
+        <line class="dim" x1="410" y1="672" x2="486" y2="672"/>
+        <line class="tick" x1="482" y1="676" x2="490" y2="668"/>
+        <text class="dimlabel" x="448" y="688" text-anchor="middle">760</text>
+        <line class="dim" x1="486" y1="672" x2="520" y2="672"/>
+        <line class="tick" x1="516" y1="676" x2="524" y2="668"/>
+        <text class="dimlabel" x="507" y="688" text-anchor="middle">340</text>
+      </g>
+      <g class="dimg" id="d-kwin">
+        <line class="extn" x1="528" y1="74"  x2="600" y2="74"/>
+        <line class="extn" x1="528" y1="186" x2="600" y2="186"/>
+        <line class="extn" x1="528" y1="368" x2="600" y2="368"/>
+        <line class="extn" x1="528" y1="536" x2="600" y2="536"/>
+        <line class="extn" x1="524" y1="27" x2="600" y2="27"/>
+        <line class="dim" x1="596" y1="27" x2="596" y2="74"/>
+        <text class="dimlabel" x="604" y="54">470</text>
+        <line class="dim" x1="596" y1="74" x2="596" y2="186"/>
+        <text class="dimlabel" x="604" y="136">1120</text>
+        <line class="dim" x1="596" y1="368" x2="596" y2="536"/>
+        <text class="dimlabel" x="604" y="458">1680</text>
+        <line class="dim" x1="596" y1="536" x2="596" y2="650"/>
+        <line class="extn" x1="524" y1="650" x2="600" y2="650"/>
+        <text class="dimlabel" x="604" y="598">1140</text>
+      </g>
+
+      <!-- Ghost strip label -->
+      <text id="kghostlabel" class="dimlabel" x="310" y="262" text-anchor="middle" font-size="9" pointer-events="none">removed wall · 270</text>
+
+      <!-- Interactive wall hit areas -->
+      <g id="khits">
+        <line class="hit" data-wall="ksouth" data-dims="d-k4200 d-ksplit" data-name="South wall (internal, door to upper room)" data-len="3300" x1="100" y1="60" x2="430" y2="60"/>
+        <line class="hit" data-wall="kjuts" data-dims="d-kjut" data-name="Jut — south wall" data-len="900" x1="430" y1="27" x2="520" y2="27"/>
+        <line class="hit" data-wall="kjute" data-dims="d-kjut" data-name="Jut — east wall" data-len="330" x1="430" y1="27" x2="430" y2="60"/>
+        <line class="hit" data-wall="keastm" data-dims="d-k2100" data-name="East wall — middle section (incl. exposed 270)" data-len="2100" x1="100" y1="60" x2="100" y2="270"/>
+        <line class="hit" data-wall="kinset" data-dims="d-k400" data-name="East step" data-len="400" x1="100" y1="270" x2="140" y2="270"/>
+        <line class="hit" data-wall="keastl" data-dims="d-k3800e" data-name="East wall — lower section" data-len="3800" x1="140" y1="270" x2="140" y2="650"/>
+        <line class="hit" data-wall="knorth" data-dims="d-k3800n" data-name="North wall (exit door)" data-len="3800" x1="140" y1="650" x2="520" y2="650"/>
+        <line class="hit" data-wall="kwest" data-dims="d-k5900 d-kwin" data-name="West wall (two windows, incl. jut)" data-len="6230" x1="520" y1="27" x2="520" y2="650"/>
+      </g>
+          <g id="kzlabels" pointer-events="none"></g>
+    </svg>
+
+    <aside>
+      <table id="ktable" style="display:none">
+        <tr><th>Wall</th><th>Facing</th><th>mm</th></tr>
+        <tr data-dims="d-k4200"><td>Overall width, east &rarr; west</td><td>&nbsp;</td><td>4200</td></tr>
+        <tr data-dims="d-ksplit"><td>South (internal, to jut corner)</td><td>upper room</td><td>3300</td></tr>
+        <tr data-dims="d-ksplit"><td>South — east of door</td><td>wall segment</td><td>2440</td></tr>
+        <tr data-dims="d-ksplit"><td>South — door to upper room</td><td>door width</td><td>780</td></tr>
+        <tr data-dims="d-ksplit"><td>South — door to jut corner</td><td>wall segment</td><td>80</td></tr>
+        <tr data-dims="d-kjut"><td>Jut — south wall</td><td>storage</td><td>900</td></tr>
+        <tr data-dims="d-kjut"><td>Jut — east wall</td><td>upper room</td><td>330</td></tr>
+        <tr data-dims="d-k2100"><td>East — middle (incl. exposed 270)</td><td>outside</td><td>2100</td></tr>
+        <tr data-dims="d-k400"><td>East step</td><td>outside</td><td>400</td></tr>
+        <tr data-dims="d-k3800e"><td>East — lower</td><td>outside</td><td>3800</td></tr>
+        <tr data-dims="d-k3800n"><td>North</td><td>outside, exit door</td><td>3800</td></tr>
+        <tr data-dims="d-k3800n"><td>North — east of door</td><td>wall segment</td><td>2700</td></tr>
+        <tr data-dims="d-k3800n"><td>North — exit door</td><td>door width</td><td>760</td></tr>
+        <tr data-dims="d-k3800n"><td>North — west of door</td><td>wall segment</td><td>340</td></tr>
+        <tr data-dims="d-k5900"><td>West (incl. jut 330)</td><td>outside, 2 windows</td><td>6230</td></tr>
+        <tr data-dims="d-k4200 d-k2100 d-k400 d-k3800e d-k3800n d-k5900 d-kjut"><td>Ceiling</td><td>floor &rarr; ceiling</td><td>2400</td></tr>
+      </table>
+    </aside>
+  </div>
+
+  <div id="kelev-wrap">
+    <h3 id="kelev-title">Front-on view</h3>
+    <p class="hintline" id="kelev-hint">Click a wall on the plan above to see it face-on with its measurements.</p>
+    <div id="kelev"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SC = 0.1, H = 2400;
+  var WALLS = {
+    kwest:  { name: 'West wall (incl. jut) — facing it from inside, left = south', len: 6230, feats: [
+      { t: 'win', x: 470,  w: 1120, sill: 1000, head: 2130, label: 'Window 1' },
+      { t: 'win', x: 3410, w: 1680, sill: 1020, head: 2150, label: 'Window 2' } ] },
+    ksouth: { name: 'South wall (internal, to jut corner) — left = east', len: 3300, ext: 900, feats: [
+      { t: 'door', x: 2440, w: 780, h: 1980, label: 'Door to upper room' } ] },
+    kjuts:  { name: 'Jut — south wall (borders storage) — left = east', len: 900, feats: [] },
+    kjute:  { name: 'Jut — east wall (borders upper room) — left = south', len: 330, feats: [] },
+    knorth: { name: 'North wall — left = west', len: 3800, feats: [
+      { t: 'door', x: 340, w: 760, h: 1960, label: 'Exit door' } ] },
+    keastm: { name: 'East wall, middle section (incl. exposed 270) — left = south', len: 2100, feats: [] },
+    kinset: { name: 'East step — left = east', len: 400, feats: [] },
+    keastl: { name: 'East wall, lower section — left = south', len: 3800, feats: [] }
+  };
+
+  var title = document.getElementById('kelev-title');
+  var hint = document.getElementById('kelev-hint');
+  var mount = document.getElementById('kelev');
+
+  function fmt(mm) { return mm.toLocaleString('en-IE') + ' mm'; }
+
+  function elevSVG(w) {
+    var px = w.len * SC, py = H * SC, ox = 50, oy = 30, extPx = (w.ext || 0) * SC;
+    var s = '<svg viewBox="0 0 ' + (px + extPx + 130) + ' ' + (py + 90) + '" style="max-width:' + (px + extPx + 130) + 'px" xmlns="http://www.w3.org/2000/svg">';
+    function tick(x, y) { return '<line x1="' + (x - 4) + '" y1="' + (y + 4) + '" x2="' + (x + 4) + '" y2="' + (y - 4) + '" stroke="#6b7a90" stroke-width="1"/>'; }
+    function hdim(x1, x2, y, val) {
+      return '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y + '" stroke="#6b7a90" stroke-width="1"/>' + tick(x1, y) + tick(x2, y) +
+        '<text x="' + ((x1 + x2) / 2) + '" y="' + (y - 5) + '" text-anchor="middle" font-size="10" fill="#6b7a90">' + val + '</text>';
+    }
+    function vdim(x, y1, y2, val) {
+      return '<line x1="' + x + '" y1="' + y1 + '" x2="' + x + '" y2="' + y2 + '" stroke="#6b7a90" stroke-width="1"/>' + tick(x, y1) + tick(x, y2) +
+        '<text x="' + (x + 7) + '" y="' + ((y1 + y2) / 2 + 3) + '" font-size="10" fill="#6b7a90">' + val + '</text>';
+    }
+    s += '<rect x="' + ox + '" y="' + oy + '" width="' + (px + extPx) + '" height="' + py + '" fill="#eef3fb" stroke="#1f3a5f" stroke-width="3"/>';
+    if (extPx) s += '<line x1="' + (ox + px) + '" y1="' + oy + '" x2="' + (ox + px) + '" y2="' + (oy + py) + '" stroke="#1f3a5f" stroke-width="3" stroke-dasharray="1 14" stroke-linecap="round"/>';
+    w.feats.forEach(function (f) {
+      var fx = ox + f.x * SC;
+      if (f.t === 'win') {
+        var wy = oy + (H - f.head) * SC, wh = (f.head - f.sill) * SC, ww = f.w * SC;
+        s += '<rect x="' + fx + '" y="' + wy + '" width="' + ww + '" height="' + wh + '" fill="#dcedf7" stroke="#1f6fb0" stroke-width="2"/>';
+        s += '<line x1="' + (fx + ww / 2) + '" y1="' + wy + '" x2="' + (fx + ww / 2) + '" y2="' + (wy + wh) + '" stroke="#1f6fb0" stroke-width="1"/>';
+        s += '<text x="' + (fx + ww / 2) + '" y="' + (wy + wh / 2 - 4) + '" text-anchor="middle" font-size="11" fill="#1f3a5f" font-weight="600">' + f.label + '</text>';
+        s += '<text x="' + (fx + ww / 2) + '" y="' + (wy + wh / 2 + 12) + '" text-anchor="middle" font-size="10" fill="#6b7a90">' + f.w + ' × ' + (f.head - f.sill) + '</text>';
+        var sillY = wy + wh, floorY = oy + py, winMidY = wy + wh / 2;
+        s += vdim(fx + ww / 2, sillY, floorY, f.sill);
+        var rightOff = w.len - f.x - f.w;
+        if (f.x <= rightOff) s += hdim(ox, fx, winMidY, f.x);
+        else s += hdim(fx + ww, ox + px, winMidY, rightOff);
+      } else {
+        var dy = oy + (H - f.h) * SC, dh = f.h * SC, dw = f.w * SC;
+        s += '<rect x="' + fx + '" y="' + dy + '" width="' + dw + '" height="' + dh + '" fill="#eafaea" stroke="#2e8b2e" stroke-width="2"/>';
+        s += '<text x="' + (fx + dw / 2) + '" y="' + (dy + dh / 2 + 4) + '" text-anchor="middle" font-size="10" fill="#6b7a90">' + f.w + ' × ' + f.h + (f.assumed ? ' (assumed)' : '') + '</text>';
+        s += hdim(ox, fx, dy + dh / 2, f.x);
+      }
+    });
+    s += '<text x="' + (ox + px / 2) + '" y="' + (oy + py + 18) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600">' + w.len + '</text>';
+    if (extPx) s += '<text x="' + (ox + px + extPx / 2) + '" y="' + (oy + py + 18) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600">' + w.ext + '</text>';
+    s += '<text x="' + (ox - 12) + '" y="' + (oy + py / 2) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600" transform="rotate(-90 ' + (ox - 12) + ' ' + (oy + py / 2) + ')">2400</text>';
+    s += '<line x1="' + ox + '" y1="' + (oy + py + 6) + '" x2="' + (ox + px + extPx) + '" y2="' + (oy + py + 6) + '" stroke="#6b7a90" stroke-width="1"/>';
+    if (extPx) s += tick(ox + px, oy + py + 6);
+    s += '<line x1="' + (ox - 4) + '" y1="' + oy + '" x2="' + (ox - 4) + '" y2="' + (oy + py) + '" stroke="#6b7a90" stroke-width="1"/>';
+    s += '</svg>';
+    return s;
+  }
+
+  var hits = Array.prototype.slice.call(document.querySelectorAll('#khits .hit'));
+  hits.forEach(function (el) {
+    el.addEventListener('mouseenter', function () {
+      (el.dataset.dims || '').split(' ').forEach(function (id) {
+        var g = document.getElementById(id);
+        if (g) g.classList.add('show');
+      });
+    });
+    el.addEventListener('mouseleave', function () {
+      document.querySelectorAll('#kplan .dimg').forEach(function (g) { g.classList.remove('show'); });
+      var sel = document.querySelector('#khits .hit.sel');
+      if (sel) (sel.dataset.dims || '').split(' ').forEach(function (id) {
+        var g = document.getElementById(id);
+        if (g) g.classList.add('show');
+      });
+    });
+    el.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (el.classList.contains('sel')) {
+        el.classList.remove('sel');
+        document.querySelectorAll('#kplan .dimg').forEach(function (g) { g.classList.remove('show'); });
+        document.querySelectorAll('#kitchen tr[data-dims]').forEach(function (tr) { tr.classList.remove('show'); });
+        document.getElementById('ktable').style.display = 'none';
+        title.textContent = 'Front-on view';
+        hint.style.display = '';
+        mount.innerHTML = '';
+        return;
+      }
+      hits.forEach(function (h) { h.classList.remove('sel'); });
+      el.classList.add('sel');
+      var ids = {};
+      document.querySelectorAll('#kplan .dimg').forEach(function (g) { g.classList.remove('show'); });
+      (el.dataset.dims || '').split(' ').forEach(function (id) {
+        ids[id] = 1;
+        var g = document.getElementById(id);
+        if (g) g.classList.add('show');
+      });
+      document.querySelectorAll('#kitchen tr[data-dims]').forEach(function (tr) {
+        var on = tr.dataset.dims.split(' ').some(function (id) { return ids[id]; });
+        tr.classList.toggle('show', on);
+      });
+      document.getElementById('ktable').style.display = '';
+      var w = WALLS[el.dataset.wall];
+      title.textContent = 'Front-on view — ' + w.name;
+      hint.style.display = 'none';
+      mount.innerHTML = elevSVG(w);
+      document.getElementById('kelev-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+
+  var zones = Array.prototype.slice.call(document.querySelectorAll('#kplan .zone'));
+  var zlabels = document.getElementById('kzlabels');
+  function updateArea() {
+    zlabels.innerHTML = '';
+    var sel = zones.filter(function (z) { return z.classList.contains('zsel'); });
+    if (!sel.length) { document.getElementById('kghostlabel').style.opacity = ''; return; }
+    var total = sel.reduce(function (s, z) { return s + Number(z.dataset.a); }, 0);
+    var bs = sel.map(function (z) { return z.getBBox(); });
+    var x1 = Math.min.apply(null, bs.map(function (b) { return b.x; }));
+    var y1 = Math.min.apply(null, bs.map(function (b) { return b.y; }));
+    var x2 = Math.max.apply(null, bs.map(function (b) { return b.x + b.width; }));
+    var y2 = Math.max.apply(null, bs.map(function (b) { return b.y + b.height; }));
+    var t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    t.setAttribute('x', (x1 + x2) / 2);
+    t.setAttribute('y', (y1 + y2) / 2 + 5);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('class', 'roomlabel');
+    t.textContent = total.toFixed(2) + ' m²';
+    zlabels.appendChild(t);
+    var cy = (y1 + y2) / 2;
+    document.getElementById('kghostlabel').style.opacity = (cy > 243 && cy < 270) ? '0' : '';
+  }
+  zones.forEach(function (z) {
+    z.addEventListener('click', function (e) {
+      e.stopPropagation();
+      z.classList.toggle('zsel');
+      updateArea();
+    });
+  });
+})();
+</script>
+<script>
+(function () {
+  var HOUSE_DATA = {
+    meta: {
+      description: "Measured floor plan of a house ground floor, plus a kitchen project combining the middle and lower rooms into one space",
+      units: "millimetres unless a key says otherwise",
+      measurement_tolerance_mm: 20,
+      ceiling_height: 2400,
+      orientation_note: "Compass directions are real-world. On the drawings, south is at the top and east is at the left, but this JSON uses compass directions only.",
+      coordinate_system: "Polygons are ordered [x, y] corner lists in mm. x = distance WEST of the east-most external wall's inner face (x=0 at the east wall of the upper and middle rooms). y = distance NORTH of the south-most external wall's inner face (y=0 at the house's south wall). Ground-floor internal walls are treated as zero-thickness except where noted; the 270 thick wall between the middle and lower rooms occupies y=6850 to y=7120 in spirit but ground-floor polygons butt at y=6850."
+    },
+    ground_floor: {
+      overall_width_east_to_west: 4200,
+      rooms: {
+        upper_room: {
+          position: "southernmost room",
+          usable_area_m2: 16.12,
+          usable_width_east_to_west: 3300,
+          length_north_to_south: 5020,
+          polygon_mm: [[0, 0], [2910, 0], [2910, 1150], [3300, 1150], [3300, 5020], [0, 5020]],
+          note: "The stairwell strip (900 wide) and landing (1290 wide) run along its west side. The polygon notch at the south-west is the landing area in front of the foot-of-stairs door."
+        },
+        middle_room: {
+          position: "between upper and lower rooms",
+          area_m2: 7.98,
+          main_body: { width_east_to_west: 4200, depth_north_to_south: 1830 },
+          jut: {
+            width_east_to_west: 900,
+            depth_north_to_south: 330,
+            note: "At the west end the room extends 330 south into the former understairs area"
+          },
+          polygon_mm: [[0, 5020], [3300, 5020], [3300, 4690], [4200, 4690], [4200, 6850], [0, 6850]]
+        },
+        lower_room: {
+          position: "northernmost room",
+          area_m2: 14.44,
+          width_east_to_west: 3800,
+          depth_north_to_south: 3800,
+          polygon_mm: [[400, 6850], [4200, 6850], [4200, 10650], [400, 10650]],
+          note: "Its east wall sits 400 further west than the rooms above (see east_wall step)"
+        }
+      },
+      other_polygons_mm: {
+        stairwell_and_landing: [[2910, 0], [4200, 0], [4200, 3870], [3300, 3870], [3300, 1150], [2910, 1150]],
+        understairs_storage: [[3300, 3870], [4200, 3870], [4200, 4690], [3300, 4690]]
+      },
+      stairs_and_storage: {
+        stairwell_strip_width_east_to_west: 900,
+        landing_depth_north_to_south: 1290,
+        stairwell_wall_length_north_to_south: 2720,
+        tread_depth: 250,
+        understairs_storage: { length_east_to_west: 900, depth_north_to_south: 820 },
+        note: "Stairs run along the west side of the upper room; storage sits under them at the north end, entered from the upper room"
+      },
+      walls: {
+        south_wall: {
+          total: 4200,
+          segments_east_to_west: [
+            { length: 2910, note: "upper room external wall" },
+            { length: 390, note: "jog at the foot-of-stairs wall" },
+            { length: 900, note: "stairwell strip" }
+          ]
+        },
+        east_wall_south_to_north: [
+          { length: 5020, note: "upper room" },
+          { length: 1830, note: "middle room" },
+          { length: 400, note: "step: lower room is inset 400 to the west" },
+          { length: 3800, note: "lower room" }
+        ],
+        west_wall_south_to_north: [
+          { length: 4690, note: "south end to the middle room jut" },
+          { length: 2160, note: "middle room including the 330 jut" },
+          { length: 3800, note: "lower room" }
+        ],
+        north_wall: {
+          total: 3800,
+          segments_east_to_west: [
+            { length: 2700, note: "wall" },
+            { length: 760, note: "exit door opening" },
+            { length: 340, note: "wall" }
+          ]
+        },
+        internal_wall_between_upper_and_middle: {
+          total_east_to_west: 3300,
+          segments_east_to_west: [
+            { length: 2440, note: "wall" },
+            { length: 780, note: "door opening" },
+            { length: 80, note: "wall, to the jut corner" }
+          ]
+        },
+        internal_wall_between_middle_and_lower: {
+          length_east_to_west: 3800,
+          thickness: 270,
+          note: "This is the wall removed in the kitchen project"
+        },
+        foot_of_stairs_wall: {
+          total_north_to_south: 1150,
+          segments_south_to_north: [
+            { length: 200, note: "wall" },
+            { length: 750, note: "door opening" },
+            { length: 200, note: "wall" }
+          ]
+        }
+      },
+      doors: [
+        { name: "foot of stairs door", width: 750, hinge: "south jamb", opens: "into the upper room" },
+        { name: "understairs storage door", width: 820, hinge: "south jamb", opens: "outward into the upper room", note: "820 is the full west side of the storage: it spans y=3870 to y=4690 at x=3300" },
+        { name: "door between upper and middle rooms", width: 780, height: 1980, hinge: "west jamb", opens: "into the middle room" },
+        { name: "exit door in north wall of lower room", width: 760, height: 1960, hinge: "west jamb", opens: "outward, to the north" }
+      ]
+    },
+    kitchen_project: {
+      description: "The middle and lower rooms combined into one kitchen. The 270 thick dividing wall between them is fully removed.",
+      total_area_m2: 23.56,
+      coordinate_system: "Same x axis as the ground floor (x=0 at the east wall, increasing west). y=0 at the jut's south face (the kitchen's southernmost point), increasing north. The main south wall face is therefore at y=330.",
+      polygons_mm: {
+        kitchen_outline: [[0, 330], [3300, 330], [3300, 0], [4200, 0], [4200, 6230], [400, 6230], [400, 2430], [0, 2430]],
+        middle_zone_including_jut: [[0, 330], [3300, 330], [3300, 0], [4200, 0], [4200, 2160], [0, 2160]],
+        removed_wall_strip: [[0, 2160], [4200, 2160], [4200, 2430], [0, 2430]],
+        lower_zone: [[400, 2430], [4200, 2430], [4200, 6230], [400, 6230]]
+      },
+      removed_wall: { thickness: 270, length_east_to_west: 3800 },
+      walls: {
+        south: {
+          length_to_jut_corner: 3300,
+          segments_east_to_west: [
+            { length: 2440, note: "wall" },
+            { length: 780, note: "door to the upper room" },
+            { length: 80, note: "wall, to the jut corner" }
+          ],
+          jut_south_face_east_to_west: 900,
+          jut_depth_north_to_south: 330,
+          note: "Internal wall shared with the upper room; the jut section sits 330 further south"
+        },
+        west: {
+          total_including_jut: 6230,
+          note: "External wall: 5900 along the main line plus the 330 jut depth at the south end. Two windows."
+        },
+        north: {
+          total: 3800,
+          segments_east_to_west: [
+            { length: 2700, note: "wall" },
+            { length: 760, note: "exit door" },
+            { length: 340, note: "wall" }
+          ],
+          note: "External wall"
+        },
+        east_south_to_north: [
+          { length: 2100, note: "middle section, includes the exposed 270 end of the removed wall" },
+          { length: 400, note: "step to the west" },
+          { length: 3800, note: "lower section" }
+        ]
+      },
+      windows_on_west_wall: [
+        {
+          name: "Window 1",
+          offset_from_south_end_of_wall: 470,
+          width: 1120,
+          sill_height_above_floor: 1000,
+          head_height_above_floor: 2130,
+          height: 1130
+        },
+        {
+          name: "Window 2",
+          offset_from_south_end_of_wall: 3410,
+          offset_from_north_end_of_wall: 1140,
+          width: 1680,
+          sill_height_above_floor: 1020,
+          head_height_above_floor: 2150,
+          height: 1130
+        }
+      ],
+      note: "Window offsets are measured along the full 6230 wall including the jut"
+    }
+  };
+
+  var KITCHEN_DATA = {
+    meta: HOUSE_DATA.meta,
+    kitchen: HOUSE_DATA.kitchen_project,
+    doors: HOUSE_DATA.ground_floor.doors.filter(function (d) {
+      return d.name.indexOf('upper and middle') !== -1 || d.name.indexOf('exit door') !== -1;
+    })
+  };
+
+  function wireCopy(id, data, label) {
+    var btn = document.getElementById(id);
+    btn.addEventListener('click', function () {
+      var text = JSON.stringify(data, null, 2);
+      function done(ok) {
+        btn.textContent = ok ? 'Copied \u2713' : 'Copy failed';
+        setTimeout(function () { btn.textContent = label; }, 1600);
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        done(ok);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+      } else { fallback(); }
+    });
+  }
+  wireCopy('copyjson', HOUSE_DATA, 'Copy measurements JSON');
+  wireCopy('copykjson', KITCHEN_DATA, 'Copy kitchen JSON');
+})();
+</script>
+</body>
+</html>
