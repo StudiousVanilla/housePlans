@@ -89,12 +89,16 @@
   @media (pointer:coarse) {
     .hit { stroke-width:26; }
   }
+  #k3dmount, #g3dmount { width:100%; height:520px; border-radius:8px; overflow:hidden; background:#f7f9fc; border:1px solid #e3e8ef; }
+  #k3dmount canvas, #g3dmount canvas { display:block; }
+  .k3dhint { color:var(--muted); font-size:12px; margin:0 0 10px; }
+  @media (max-width:700px) { #k3dmount, #g3dmount { height:340px; } }
   .rose text { font-size:11px; font-weight:700; letter-spacing:.06em; fill:#6b7a90; }
   .rose .s { fill:#b23b3b; }
 </style>
 </head>
 <body>
-<nav class="plans"><a href="#house">Ground floor</a><a href="#kitchen">Kitchen (middle + lower combined)</a><button id="copyjson" type="button">Copy measurements JSON</button><button id="copykjson" type="button">Copy kitchen JSON</button></nav>
+<nav class="plans"><a href="#house">Ground floor</a><a href="#g3d">Ground 3D</a><a href="#kitchen">Kitchen (middle + lower combined)</a><a href="#k3d">Kitchen 3D</a><button id="copyjson" type="button">Copy measurements JSON</button><button id="copykjson" type="button">Copy kitchen JSON</button></nav>
 <div class="sheet" id="house">
   <div class="sheethead">
   <h1>House Plan — Ground Floor</h1>
@@ -487,6 +491,14 @@
 })();
 </script>
 
+<div class="sheet" id="g3d">
+  <div class="sheethead">
+    <h1>Ground Floor — 3D View</h1>
+  </div>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green, stairs teal.</p>
+  <div id="g3dmount"></div>
+</div>
+
 <div class="sheet" id="kitchen">
   <div class="sheethead">
   <h1>Kitchen — Middle + Lower Rooms Combined</h1>
@@ -703,6 +715,169 @@
     <div id="kelev"></div>
   </div>
 </div>
+
+<div class="sheet" id="k3d">
+  <div class="sheethead">
+    <h1>Kitchen — 3D View</h1>
+  </div>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green.</p>
+  <div id="k3dmount"></div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+var mounts = [document.getElementById('k3dmount'), document.getElementById('g3dmount')];
+try {
+  const THREE = await import('three');
+  const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
+
+  const H = 2400, T = 100, SC = 0.001;
+
+  function buildViewer(mount, cfg) {
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf7f9fc);
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0xdde5f0, roughness: 0.9 });
+    const paneMat = new THREE.MeshStandardMaterial({ color: 0x7fb3d9, transparent: true, opacity: 0.45, roughness: 0.2 });
+    const doorMat = new THREE.MeshStandardMaterial({ color: 0x2e8b2e });
+    const stairMat = new THREE.MeshStandardMaterial({ color: 0xaed4e4, roughness: 0.9 });
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0x1f3a5f, transparent: true, opacity: 0.4 });
+
+    function box(cx, cy, cz, sx, sy, sz, mat, edges) {
+      const g = new THREE.BoxGeometry(sx * SC, sy * SC, sz * SC);
+      const m = new THREE.Mesh(g, mat);
+      m.position.set(cx * SC, cy * SC, cz * SC);
+      scene.add(m);
+      if (edges) {
+        const e = new THREE.LineSegments(new THREE.EdgesGeometry(g), edgeMat);
+        e.position.copy(m.position);
+        scene.add(e);
+      }
+      return m;
+    }
+
+    function wallPiece(w, a, b, y0, y1, mat, thick, edges) {
+      if (b - a < 1 || y1 - y0 < 1) return;
+      const mid = (a + b) / 2, cy = (y0 + y1) / 2, len = b - a, ht = y1 - y0;
+      const off = w.out * thick / 2;
+      if (w.axis === 'x') box(mid, cy, w.at + off, len, ht, thick, mat, edges);
+      else box(w.at + off, cy, mid, thick, ht, len, mat, edges);
+    }
+
+    cfg.walls.forEach(function (w) {
+      let cur = w.from;
+      const ops = (w.openings || []).slice().sort(function (p, q) { return p.a - q.a; });
+      ops.forEach(function (o) {
+        wallPiece(w, cur, o.a, 0, H, wallMat, T, true);
+        wallPiece(w, o.a, o.b, o.top, H, wallMat, T, true);
+        if (o.bottom > 0) wallPiece(w, o.a, o.b, 0, o.bottom, wallMat, T, true);
+        if (o.kind === 'win') wallPiece(w, o.a, o.b, o.bottom, o.top, paneMat, T / 4, false);
+        if (o.kind === 'door') wallPiece(w, o.a, o.b, 0, 25, doorMat, T, false);
+        cur = o.b;
+      });
+      wallPiece(w, cur, w.to, 0, H, wallMat, T, true);
+    });
+
+    (cfg.stairs || []).forEach(function (st) { box(st[0], st[1], st[2], st[3], st[4], st[5], stairMat, true); });
+
+    const shape = new THREE.Shape(cfg.outline.map(function (pt) { return new THREE.Vector2(pt[0] * SC, pt[1] * SC); }));
+    const floorGeo = new THREE.ShapeGeometry(shape);
+    floorGeo.rotateX(Math.PI / 2);
+    const floor = new THREE.Mesh(floorGeo, new THREE.MeshStandardMaterial({ color: 0xeef3fb, roughness: 1, side: THREE.DoubleSide }));
+    floor.position.y = 0.001;
+    scene.add(floor);
+    scene.add(new THREE.LineLoop(
+      new THREE.BufferGeometry().setFromPoints(cfg.outline.map(function (pt) { return new THREE.Vector3(pt[0] * SC, 0.002, pt[1] * SC); })),
+      new THREE.LineBasicMaterial({ color: 0x1f3a5f })
+    ));
+
+    scene.add(new THREE.ArrowHelper(new THREE.Vector3(0, 0, -1), new THREE.Vector3(cfg.arrowX, 0.05, -0.7), 0.9, 0xb23b3b, 0.3, 0.15));
+    scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(8, 10, -4);
+    scene.add(sun);
+
+    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    camera.position.set(cfg.cam[0], cfg.cam[1], cfg.cam[2]);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    mount.appendChild(renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(cfg.target[0], cfg.target[1], cfg.target[2]);
+    controls.enableDamping = true;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+
+    function size() {
+      const w = mount.clientWidth, h = mount.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+    size();
+    window.addEventListener('resize', size);
+    renderer.setAnimationLoop(function () {
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  }
+
+  // Kitchen: x = west of east wall, z = north of jut south face.
+  buildViewer(mounts[0], {
+    outline: [[0,330],[3300,330],[3300,0],[4200,0],[4200,6230],[400,6230],[400,2430],[0,2430]],
+    walls: [
+      { axis:'x', at:330, from:0, to:3300, out:-1, openings:[{a:2440, b:3220, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:0, from:3300, to:4200, out:-1 },
+      { axis:'z', at:3300, from:0, to:330, out:-1 },
+      { axis:'z', at:4200, from:0, to:6230, out:1, openings:[
+          {a:470, b:1590, bottom:1000, top:2130, kind:'win'},
+          {a:3410, b:5090, bottom:1020, top:2150, kind:'win'}] },
+      { axis:'x', at:6230, from:400, to:4200, out:1, openings:[{a:3100, b:3860, bottom:0, top:1960, kind:'door'}] },
+      { axis:'z', at:0, from:330, to:2430, out:-1 },
+      { axis:'x', at:2430, from:0, to:400, out:1 },
+      { axis:'z', at:400, from:2430, to:6230, out:-1 }
+    ],
+    cam: [7.8, 8.2, -3.6], target: [2.1, 0.9, 3.1], arrowX: 2.1
+  });
+
+  // Ground floor: x = west of east wall, z = north of south wall.
+  var gStairs = [];
+  for (var i = 0; i < 10; i++) {
+    var h = (i + 1) * 220;
+    gStairs.push([3750, h / 2, 1150 + 272 * (i + 0.5), 900, h, 272]);
+  }
+  buildViewer(mounts[1], {
+    outline: [[0,0],[4200,0],[4200,10650],[400,10650],[400,6850],[0,6850]],
+    walls: [
+      { axis:'x', at:0, from:0, to:4200, out:-1 },
+      { axis:'z', at:4200, from:0, to:10650, out:1, openings:[
+          {a:5160, b:6280, bottom:1000, top:2130, kind:'win'},
+          {a:7830, b:9510, bottom:1020, top:2150, kind:'win'}] },
+      { axis:'x', at:10650, from:400, to:4200, out:1, openings:[{a:3100, b:3860, bottom:0, top:1960, kind:'door'}] },
+      { axis:'z', at:0, from:0, to:6850, out:-1 },
+      { axis:'x', at:6850, from:0, to:400, out:1 },
+      { axis:'z', at:400, from:6850, to:10650, out:-1 },
+      { axis:'x', at:5020, from:0, to:3300, out:0, openings:[{a:2440, b:3220, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:4690, from:3300, to:4200, out:0 },
+      { axis:'z', at:3300, from:4690, to:5020, out:0 },
+      { axis:'z', at:3300, from:1150, to:3870, out:0 },
+      { axis:'z', at:3300, from:3870, to:4690, out:0, openings:[{a:3870, b:4690, bottom:0, top:1980, kind:'door'}] },
+      { axis:'z', at:2910, from:0, to:1150, out:0, openings:[{a:200, b:950, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:1150, from:2910, to:3300, out:0 },
+      { axis:'x', at:6850, from:400, to:4200, out:0 }
+    ],
+    stairs: gStairs,
+    cam: [10.5, 9.5, -2.0], target: [2.1, 0.9, 5.3], arrowX: 2.1
+  });
+} catch (e) {
+  mounts.forEach(function (mt) {
+    if (mt) mt.innerHTML = '<p style="padding:20px;color:#6b7a90;font-size:13px">The 3D view needs an internet connection: it loads the three.js library from a CDN. The plans above work offline.</p>';
+  });
+}
+</script>
 
 <script>
 (function () {
