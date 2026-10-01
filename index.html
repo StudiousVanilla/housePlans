@@ -57,14 +57,16 @@
   .sw.i { border-top:2.5px dashed var(--int); }
   .sw.s { border-top:2px dashed var(--stair); }
   .sw.d { border-top:4px solid #2e8b2e; }
+  .sw.t { border-top:6px solid #f3d9cb; }
+  .iwall { fill:#f3d9cb; stroke:var(--int); stroke-width:1.2; stroke-dasharray:4 3; }
   .sw.w { border-top:4px double #1f6fb0; }
   .badge { display:inline-block; background:#eefaf0; color:#2e7d3f; border:1px solid #cdeccd; border-radius:4px; padding:1px 6px; font-size:11px; font-weight:600; }
   .warnbadge { display:inline-block; background:#fff8ec; color:#9a6b0a; border:1px solid #f0dfb8; border-radius:4px; padding:1px 6px; font-size:11px; font-weight:600; }
-  nav.plans { max-width:1000px; margin:0 auto 16px; display:flex; gap:16px; font-size:14px; }
+  nav.plans { max-width:1000px; margin:0 auto 16px; display:flex; flex-wrap:wrap; gap:10px 16px; font-size:14px; }
   nav.plans a { color:#1f5fbf; text-decoration:none; font-weight:600; }
-  #copyjson, #copykjson, #copymjson { background:#fff; border:1px solid #c7d0dc; border-radius:6px; padding:4px 12px; font-size:12.5px; font-weight:600; color:#1f3a5f; cursor:pointer; }
-  #copyjson { margin-left:auto; }
-  #copyjson:hover, #copykjson:hover, #copymjson:hover { background:#f0f4fa; }
+  #copyjson, #copykjson, #copymjson, #copyb1json, #copyb2json, #copyb3json { background:#fff; border:1px solid #c7d0dc; border-radius:6px; padding:4px 12px; font-size:12.5px; font-weight:600; color:#1f3a5f; cursor:pointer; }
+  nav.plans .navbreak { flex-basis:100%; height:0; }
+  #copyjson:hover, #copykjson:hover, #copymjson:hover, #copyb1json:hover, #copyb2json:hover, #copyb3json:hover { background:#f0f4fa; }
   .sheet + nav.plans, .sheet { margin-bottom:24px; }
   .win { stroke:#1f6fb0; stroke-width:1.6; }
   .elevwrap { margin-top:10px; border:1px solid #e3e8ef; border-radius:8px; padding:14px; background:#fbfcfe; min-height:120px; }
@@ -74,11 +76,14 @@
   .sheethead { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
   .sheethead h1 { margin:0; }
   .rose { flex:0 0 auto; }
-  #plan, #kplan, #fplan, #mplan { width:100%; height:auto; }
+  #plan, #kplan, #fplan, #mplan, #b1plan, #b2plan, #b3plan { width:100%; height:auto; }
   #plan { max-width:560px; }
   #fplan { max-width:600px; }
   #kplan { max-width:620px; }
   #mplan { max-width:640px; }
+  #b1plan { max-width:600px; }
+  #b2plan { max-width:420px; }
+  #b3plan { max-width:400px; }
   .elev svg { width:100%; height:auto; }
   @media (max-width:700px) {
     body { padding:10px; }
@@ -86,23 +91,22 @@
     h1 { font-size:17px; }
     .rose { width:56px; height:56px; }
     nav.plans { flex-wrap:wrap; gap:10px 14px; }
-    #copyjson { margin-left:0; }
     .layout { gap:16px; }
     th, td { padding:4px 6px; }
   }
   @media (pointer:coarse) {
     .hit { stroke-width:26; }
   }
-  #k3dmount, #g3dmount, #f3dmount, #m3dmount { width:100%; height:520px; border-radius:8px; overflow:hidden; background:#f7f9fc; border:1px solid #e3e8ef; }
-  #k3dmount canvas, #g3dmount canvas, #f3dmount canvas, #m3dmount canvas { display:block; }
+  #k3dmount, #g3dmount, #f3dmount, #m3dmount, #b13dmount, #b23dmount, #b33dmount { width:100%; height:520px; border-radius:8px; overflow:hidden; background:#f7f9fc; border:1px solid #e3e8ef; }
+  #k3dmount canvas, #g3dmount canvas, #f3dmount canvas, #m3dmount canvas, #b13dmount canvas, #b23dmount canvas, #b33dmount canvas { display:block; }
   .k3dhint { color:var(--muted); font-size:12px; margin:0 0 10px; }
-  @media (max-width:700px) { #k3dmount, #g3dmount, #f3dmount, #m3dmount { height:340px; } }
+  @media (max-width:700px) { #k3dmount, #g3dmount, #f3dmount, #m3dmount, #b13dmount, #b23dmount, #b33dmount { height:340px; } }
   .rose text { font-size:11px; font-weight:700; letter-spacing:.06em; fill:#6b7a90; }
   .rose .s { fill:#b23b3b; }
 </style>
 </head>
 <body>
-<nav class="plans"><a href="#house">Ground floor</a><a href="#g3d">Ground 3D</a><a href="#library">Library</a><a href="#m3d">Library 3D</a><a href="#kitchen">Kitchen</a><a href="#k3d">Kitchen 3D</a><a href="#first">First floor</a><a href="#f3d">First 3D</a><button id="copyjson" type="button">Copy measurements JSON</button><button id="copymjson" type="button">Copy Library JSON</button><button id="copykjson" type="button">Copy kitchen JSON</button></nav>
+<nav class="plans"><a href="#house">Ground floor</a><a href="#g3d">Ground 3D</a><a href="#library">Library</a><a href="#m3d">Library 3D</a><a href="#kitchen">Kitchen</a><a href="#k3d">Kitchen 3D</a><a href="#first">First floor</a><a href="#f3d">First 3D</a><a href="#bed1">Bedroom 1</a><a href="#b13d">Bedroom 1 3D</a><a href="#bed2">Bedroom 2</a><a href="#b23d">Bedroom 2 3D</a><a href="#bed3">Bedroom 3</a><a href="#b33d">Bedroom 3 3D</a><span class="navbreak"></span><button id="copyjson" type="button">Copy measurements JSON</button><button id="copymjson" type="button">Copy Library JSON</button><button id="copykjson" type="button">Copy kitchen JSON</button><button id="copyb1json" type="button">Copy Bedroom 1 JSON</button><button id="copyb2json" type="button">Copy Bedroom 2 JSON</button><button id="copyb3json" type="button">Copy Bedroom 3 JSON</button></nav>
 <div class="sheet" id="house">
   <div class="sheethead">
   <h1>House Plan — Ground Floor</h1>
@@ -861,38 +865,87 @@
   </div>
 
   <div class="layout">
-    <!-- mm to px: x*0.1+100, y*0.1+70. Same axes as the ground floor; bedroom sits above the upper room -->
-    <svg id="fplan" width="600" height="500" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+    <!-- mm to px: x*0.1+100, y*0.1+70. Same axes as the ground floor -->
+    <svg id="fplan" width="600" height="810" viewBox="0 0 600 810" xmlns="http://www.w3.org/2000/svg">
       <polygon points="100,70 520,70 520,253 430,253 430,448 137,448 137,341 100,341" fill="var(--fill)"/>
+      <rect x="100" y="448" width="202" height="306" fill="var(--fill)"/>
+      <rect x="302" y="448" width="15" height="78" fill="var(--fill)"/>
+      <rect x="317" y="448" width="93" height="82" fill="var(--fill)"/>
+      <rect x="317" y="530" width="78" height="7" fill="var(--fill)"/>
+      <rect x="317" y="537" width="203" height="217" fill="var(--fill)"/>
+      <polygon points="430,253 520,253 520,530 410,530 410,448 430,448" fill="var(--stairfill)"/>
       <rect x="100" y="341" width="37" height="107" fill="#e6e1da"/>
+      <rect class="iwall" x="302" y="526" width="15" height="228"/>
+      <rect class="iwall" x="395" y="530" width="125" height="7"/>
 
-      <path class="ext" d="M312,448 H137 V341 H100 V70 H520 V253 H430 V448 H390"/>
+      <g class="tread">
+        <line x1="430" y1="260" x2="520" y2="260"/><line x1="430" y1="285" x2="520" y2="285"/><line x1="430" y1="310" x2="520" y2="310"/><line x1="430" y1="335" x2="520" y2="335"/><line x1="430" y1="360" x2="520" y2="360"/><line x1="430" y1="385" x2="520" y2="385"/><line x1="430" y1="410" x2="520" y2="410"/><line x1="430" y1="435" x2="520" y2="435"/>
+        <line x1="430" y1="448" x2="430" y2="530"/>
+        <line x1="430" y1="448" x2="520" y2="489"/>
+        <line x1="430" y1="448" x2="520" y2="530"/>
+        <line x1="430" y1="448" x2="475" y2="530"/>
+      </g>
+      <polyline points="475,268 475,489 427,489" fill="none" stroke="var(--stair)" stroke-width="1.6"/>
+      <polygon points="412,489 427,483.75 427,494.25" fill="var(--stair)"/>
+      <polygon class="stairline" points="430,253 520,253 520,530 410,530 410,448 430,448"/>
 
-      <rect x="175" y="65" width="180" height="10" fill="#fff"/>
-      <line class="win" x1="175" y1="68" x2="355" y2="68"/>
-      <line class="win" x1="175" y1="72" x2="355" y2="72"/>
-      <line class="win" x1="175" y1="65" x2="175" y2="75"/>
-      <line class="win" x1="355" y1="65" x2="355" y2="75"/>
+      <path class="ext" d="M100,70 H520 V754 H100 V448 H137 V341 H100 V70"/>
+      <line class="int" x1="100" y1="448" x2="317" y2="448"/>
+      <line class="int" x1="395" y1="448" x2="430" y2="448"/>
+      <line class="int" x1="430" y1="253" x2="430" y2="448"/>
+      <line class="int" x1="430" y1="253" x2="520" y2="253"/>
 
-      <line class="doorline" x1="312" y1="448" x2="390" y2="448"/>
+      <rect x="165.5" y="65" width="159" height="10" fill="#fff"/>
+      <line class="win" x1="165.5" y1="68" x2="324.5" y2="68"/>
+      <line class="win" x1="165.5" y1="72" x2="324.5" y2="72"/>
+      <line class="win" x1="165.5" y1="65" x2="165.5" y2="75"/>
+      <line class="win" x1="324.5" y1="65" x2="324.5" y2="75"/>
+      <rect x="150" y="749" width="109" height="10" fill="#fff"/>
+      <line class="win" x1="150" y1="752" x2="259" y2="752"/>
+      <line class="win" x1="150" y1="756" x2="259" y2="756"/>
+      <line class="win" x1="150" y1="749" x2="150" y2="759"/>
+      <line class="win" x1="259" y1="749" x2="259" y2="759"/>
+      <rect x="364.75" y="749" width="107.5" height="10" fill="#fff"/>
+      <line class="win" x1="364.75" y1="752" x2="472.25" y2="752"/>
+      <line class="win" x1="364.75" y1="756" x2="472.25" y2="756"/>
+      <line class="win" x1="364.75" y1="749" x2="364.75" y2="759"/>
+      <line class="win" x1="472.25" y1="749" x2="472.25" y2="759"/>
+
+      <line class="doorline" x1="317" y1="448" x2="395" y2="448"/>
+      <line class="doorline" x1="302" y1="448" x2="302" y2="526"/>
+      <line class="doorline" x1="317" y1="537" x2="395" y2="537"/>
       <g pointer-events="none">
-        <line class="leaf" x1="390" y1="448" x2="390" y2="370"/>
-        <path class="swing" d="M390,370 A78,78 0 0 0 312,448"/>
+        <line class="leaf" x1="395" y1="448" x2="395" y2="370"/>
+        <path class="swing" d="M395,370 A78,78 0 0 0 317,448"/>
+        <line class="leaf" x1="302" y1="526" x2="224" y2="526"/>
+        <path class="swing" d="M224,526 A78,78 0 0 1 302,448"/>
+        <line class="leaf" x1="321" y1="537" x2="321" y2="611"/>
+        <path class="swing" d="M321,611 A74,74 0 0 0 395,537"/>
       </g>
 
-      <text class="roomlabel" x="265" y="250">Bedroom</text>
+      <text class="roomlabel" x="265" y="250">Bedroom 1</text>
       <text class="roomarea"  x="265" y="266">13.73 m&#178; usable</text>
+      <text class="roomlabel" x="201" y="630">Bedroom 2</text>
+      <text class="roomarea"  x="201" y="646">6.18 m&#178;</text>
+      <text class="roomlabel" x="363.5" y="490" style="font-size:11px">Landing</text>
+      <text class="roomarea"  x="363.5" y="502" style="font-size:10px">0.76 m&#178;</text>
+      <text class="roomlabel" x="430" y="650">Bedroom 3</text>
+      <text class="roomarea"  x="430" y="666">4.41 m&#178;</text>
 
       <g class="dimg" id="d-fs">
-        <line class="extn" x1="100" y1="66" x2="100" y2="42"/>
+        <line class="dim" x1="100" y1="88" x2="520" y2="88"/>
+        <line class="tick" x1="96" y1="92" x2="104" y2="84"/><line class="tick" x1="516" y1="92" x2="524" y2="84"/>
+        <text class="dimlabel" x="310" y="102" text-anchor="middle">4200</text>
+        <line class="extn" x1="100" y1="62" x2="100" y2="42"/>
+        <line class="extn" x1="165.5" y1="62" x2="165.5" y2="42"/>
+        <line class="extn" x1="324.5" y1="62" x2="324.5" y2="42"/>
         <line class="extn" x1="430" y1="66" x2="430" y2="42"/>
         <line class="extn" x1="520" y1="66" x2="520" y2="42"/>
-        <line class="dim" x1="100" y1="48" x2="430" y2="48"/>
-        <line class="tick" x1="96" y1="52" x2="104" y2="44"/>
-        <line class="tick" x1="426" y1="52" x2="434" y2="44"/>
-        <text class="dimlabel" x="265" y="43" text-anchor="middle">3300</text>
-        <line class="dim" x1="430" y1="48" x2="520" y2="48"/>
-        <line class="tick" x1="516" y1="52" x2="524" y2="44"/>
+        <line class="dim" x1="100" y1="48" x2="520" y2="48"/>
+        <line class="tick" x1="96" y1="52" x2="104" y2="44"/><line class="tick" x1="161.5" y1="52" x2="169.5" y2="44"/><line class="tick" x1="320.5" y1="52" x2="328.5" y2="44"/><line class="tick" x1="426" y1="52" x2="434" y2="44"/><line class="tick" x1="516" y1="52" x2="524" y2="44"/>
+        <text class="dimlabel" x="132.75" y="43" text-anchor="middle">655</text>
+        <text class="dimlabel" x="245" y="43" text-anchor="middle">1590</text>
+        <text class="dimlabel" x="377.25" y="43" text-anchor="middle">1055</text>
         <text class="dimlabel" x="475" y="43" text-anchor="middle">900</text>
       </g>
 
@@ -917,22 +970,16 @@
       </g>
 
       <g class="dimg" id="d-fn">
-        <line class="dim" x1="137" y1="430" x2="430" y2="430"/>
-        <line class="tick" x1="133" y1="434" x2="141" y2="426"/>
-        <line class="tick" x1="426" y1="434" x2="434" y2="426"/>
-        <text class="dimlabel" x="225" y="425" text-anchor="middle">2930</text>
-        <line class="extn" x1="137" y1="452" x2="137" y2="478"/>
-        <line class="extn" x1="312" y1="452" x2="312" y2="478"/>
-        <line class="extn" x1="390" y1="452" x2="390" y2="478"/>
-        <line class="extn" x1="430" y1="452" x2="430" y2="478"/>
-        <line class="dim" x1="137" y1="472" x2="430" y2="472"/>
-        <line class="tick" x1="133" y1="476" x2="141" y2="468"/>
-        <line class="tick" x1="308" y1="476" x2="316" y2="468"/>
-        <line class="tick" x1="386" y1="476" x2="394" y2="468"/>
-        <line class="tick" x1="426" y1="476" x2="434" y2="468"/>
-        <text class="dimlabel" x="224.5" y="490" text-anchor="middle">1750</text>
-        <text class="dimlabel" x="351" y="490" text-anchor="middle">780</text>
-        <text class="dimlabel" x="410" y="490" text-anchor="middle">400</text>
+        <line class="dim" x1="137" y1="404" x2="430" y2="404"/>
+        <line class="tick" x1="133" y1="408" x2="141" y2="400"/><line class="tick" x1="426" y1="408" x2="434" y2="400"/>
+        <text class="dimlabel" x="225" y="399" text-anchor="middle">2930</text>
+        <line class="extn" x1="317" y1="444" x2="317" y2="426"/>
+        <line class="extn" x1="395" y1="444" x2="395" y2="426"/>
+        <line class="dim" x1="137" y1="432" x2="430" y2="432"/>
+        <line class="tick" x1="133" y1="436" x2="141" y2="428"/><line class="tick" x1="313" y1="436" x2="321" y2="428"/><line class="tick" x1="391" y1="436" x2="399" y2="428"/><line class="tick" x1="426" y1="436" x2="434" y2="428"/>
+        <text class="dimlabel" x="227" y="427" text-anchor="middle">1800</text>
+        <text class="dimlabel" x="356" y="427" text-anchor="middle">780</text>
+        <text class="dimlabel" x="412.5" y="427" text-anchor="middle">350</text>
       </g>
 
       <g class="dimg" id="d-fw">
@@ -951,43 +998,158 @@
         <text class="dimlabel" x="475" y="283" text-anchor="middle">900</text>
       </g>
 
+      <g class="dimg" id="d-f2e">
+        <line class="extn" x1="96" y1="448" x2="72" y2="448"/>
+        <line class="extn" x1="96" y1="754" x2="72" y2="754"/>
+        <line class="dim" x1="78" y1="448" x2="78" y2="754"/>
+        <line class="tick" x1="74" y1="452" x2="82" y2="444"/><line class="tick" x1="74" y1="758" x2="82" y2="750"/>
+        <text class="dimlabel" x="73" y="601" text-anchor="middle" transform="rotate(-90 73 601)">3060</text>
+      </g>
+      <g class="dimg" id="d-f2n">
+        <line class="dim" x1="100" y1="738" x2="302" y2="738"/>
+        <line class="tick" x1="96" y1="742" x2="104" y2="734"/><line class="tick" x1="298" y1="742" x2="306" y2="734"/>
+        <text class="dimlabel" x="201" y="733" text-anchor="middle">2020</text>
+        <line class="extn" x1="100" y1="763" x2="100" y2="782"/>
+        <line class="extn" x1="150" y1="763" x2="150" y2="782"/>
+        <line class="extn" x1="259" y1="763" x2="259" y2="782"/>
+        <line class="extn" x1="302" y1="763" x2="302" y2="782"/>
+        <line class="dim" x1="100" y1="776" x2="302" y2="776"/>
+        <line class="tick" x1="96" y1="780" x2="104" y2="772"/><line class="tick" x1="146" y1="780" x2="154" y2="772"/><line class="tick" x1="255" y1="780" x2="263" y2="772"/><line class="tick" x1="298" y1="780" x2="306" y2="772"/>
+        <text class="dimlabel" x="125" y="794" text-anchor="middle">500</text>
+        <text class="dimlabel" x="204.5" y="794" text-anchor="middle">1090</text>
+        <text class="dimlabel" x="280.5" y="794" text-anchor="middle">430</text>
+      </g>
+      <g class="dimg" id="d-f2w">
+        <line class="dim" x1="290" y1="448" x2="290" y2="754"/>
+        <line class="tick" x1="286" y1="452" x2="294" y2="444"/><line class="tick" x1="286" y1="530" x2="294" y2="522"/><line class="tick" x1="286" y1="758" x2="294" y2="750"/>
+        <text class="dimlabel" x="282" y="487" text-anchor="middle" transform="rotate(-90 282 487)">780</text>
+        <text class="dimlabel" x="282" y="640" text-anchor="middle" transform="rotate(-90 282 640)">2280</text>
+        <line class="dim" x1="302" y1="700" x2="317" y2="700"/>
+        <line class="tick" x1="298" y1="704" x2="306" y2="696"/><line class="tick" x1="313" y1="704" x2="321" y2="696"/>
+        <text class="dimlabel" x="309.5" y="694" text-anchor="middle">150</text>
+      </g>
+      <g class="dimg" id="d-fl">
+        <line class="dim" x1="317" y1="464" x2="410" y2="464"/>
+        <line class="tick" x1="313" y1="468" x2="321" y2="460"/><line class="tick" x1="406" y1="468" x2="414" y2="460"/>
+        <text class="dimlabel" x="363.5" y="459" text-anchor="middle">930</text>
+        <line class="dim" x1="420" y1="448" x2="420" y2="530"/>
+        <line class="tick" x1="416" y1="452" x2="424" y2="444"/><line class="tick" x1="416" y1="534" x2="424" y2="526"/>
+        <text class="dimlabel" x="426" y="466" text-anchor="middle" transform="rotate(-90 426 466)">820</text>
+      </g>
+      <g class="dimg" id="d-f3s">
+        <line class="dim" x1="317" y1="555" x2="520" y2="555"/>
+        <line class="tick" x1="313" y1="559" x2="321" y2="551"/><line class="tick" x1="516" y1="559" x2="524" y2="551"/>
+        <text class="dimlabel" x="460" y="569" text-anchor="middle">2030</text>
+        <line class="extn" x1="317" y1="533" x2="317" y2="516"/>
+        <line class="extn" x1="395" y1="533" x2="395" y2="516"/>
+        <line class="extn" x1="520" y1="533" x2="520" y2="516"/>
+        <line class="dim" x1="317" y1="522" x2="520" y2="522"/>
+        <line class="tick" x1="313" y1="526" x2="321" y2="518"/><line class="tick" x1="391" y1="526" x2="399" y2="518"/><line class="tick" x1="516" y1="526" x2="524" y2="518"/>
+        <text class="dimlabel" x="356" y="517" text-anchor="middle">780</text>
+        <text class="dimlabel" x="457.5" y="517" text-anchor="middle">1250</text>
+        <line class="dim" x1="505" y1="530" x2="505" y2="537"/>
+        <text class="dimlabel" x="509" y="548">70</text>
+      </g>
+      <g class="dimg" id="d-f3e">
+        <line class="dim" x1="333" y1="537" x2="333" y2="754"/>
+        <line class="tick" x1="329" y1="541" x2="337" y2="533"/><line class="tick" x1="329" y1="758" x2="337" y2="750"/>
+        <text class="dimlabel" x="345" y="690" text-anchor="middle" transform="rotate(-90 345 690)">2170</text>
+      </g>
+      <g class="dimg" id="d-f3n">
+        <line class="dim" x1="317" y1="738" x2="520" y2="738"/>
+        <line class="tick" x1="313" y1="742" x2="321" y2="734"/><line class="tick" x1="516" y1="742" x2="524" y2="734"/>
+        <text class="dimlabel" x="418.5" y="733" text-anchor="middle">2030</text>
+        <line class="extn" x1="317" y1="763" x2="317" y2="782"/>
+        <line class="extn" x1="364.75" y1="763" x2="364.75" y2="782"/>
+        <line class="extn" x1="472.25" y1="763" x2="472.25" y2="782"/>
+        <line class="extn" x1="520" y1="763" x2="520" y2="782"/>
+        <line class="dim" x1="317" y1="776" x2="520" y2="776"/>
+        <line class="tick" x1="313" y1="780" x2="321" y2="772"/><line class="tick" x1="360.75" y1="780" x2="368.75" y2="772"/><line class="tick" x1="468.25" y1="780" x2="476.25" y2="772"/><line class="tick" x1="516" y1="780" x2="524" y2="772"/>
+        <text class="dimlabel" x="341" y="794" text-anchor="middle">477.5</text>
+        <text class="dimlabel" x="418.5" y="794" text-anchor="middle">1075</text>
+        <text class="dimlabel" x="496" y="794" text-anchor="middle">477.5</text>
+      </g>
+      <g class="dimg" id="d-f3w">
+        <line class="extn" x1="524" y1="537" x2="548" y2="537"/>
+        <line class="extn" x1="524" y1="754" x2="548" y2="754"/>
+        <line class="dim" x1="542" y1="537" x2="542" y2="754"/>
+        <line class="tick" x1="538" y1="541" x2="546" y2="533"/><line class="tick" x1="538" y1="758" x2="546" y2="750"/>
+        <text class="dimlabel" x="556" y="645.5" text-anchor="middle" transform="rotate(-90 556 645.5)">2170</text>
+      </g>
+
       <g id="fhits">
-        <line class="hit" data-name="South wall, window section (size to be measured)" data-dims="d-fs" data-len="3300" x1="100" y1="70" x2="430" y2="70"/>
-        <line class="hit" data-name="South wall, west section" data-dims="d-fs" data-len="900" x1="430" y1="70" x2="520" y2="70"/>
-        <line class="hit" data-name="West wall, south section" data-dims="d-fw" data-len="1830" x1="520" y1="70" x2="520" y2="253"/>
-        <line class="hit" data-name="West wall step" data-dims="d-fw" data-len="900" x1="430" y1="253" x2="520" y2="253"/>
-        <line class="hit" data-name="West wall, north section (derived, to confirm)" data-dims="d-fw" data-len="1950" x1="430" y1="253" x2="430" y2="448"/>
-        <line class="hit" data-name="North wall (incl. 780 door)" data-dims="d-fn" data-len="2930" x1="137" y1="448" x2="430" y2="448"/>
-        <line class="hit" data-name="Door to bedroom" data-dims="d-fn" data-len="780" x1="312" y1="448" x2="390" y2="448"/>
-        <line class="hit" data-name="Chimney breast, front" data-dims="d-fe" data-len="1070" x1="137" y1="341" x2="137" y2="448"/>
-        <line class="hit" data-name="Chimney breast, south side" data-dims="d-fe" data-len="370" x1="100" y1="341" x2="137" y2="341"/>
-        <line class="hit" data-name="East wall" data-dims="d-fe" data-len="2710" x1="100" y1="70" x2="100" y2="341"/>
+        <rect class="hit furnhit" data-name="Landing (east to west)" data-dims="d-fl" data-len="930" x="317" y="448" width="93" height="82"/>
+        <line class="hit" data-name="Bedroom 1, south wall, window section" data-dims="d-fs" data-len="3300" x1="100" y1="70" x2="430" y2="70"/>
+        <line class="hit" data-name="Bedroom 1, south wall, west section" data-dims="d-fs" data-len="900" x1="430" y1="70" x2="520" y2="70"/>
+        <line class="hit" data-name="Bedroom 1, west wall, south section" data-dims="d-fw" data-len="1830" x1="520" y1="70" x2="520" y2="253"/>
+        <line class="hit" data-name="Bedroom 1, west wall step" data-dims="d-fw" data-len="900" x1="430" y1="253" x2="520" y2="253"/>
+        <line class="hit" data-name="Bedroom 1, west wall, north section" data-dims="d-fw" data-len="1950" x1="430" y1="253" x2="430" y2="448"/>
+        <line class="hit" data-name="Bedroom 1, north wall (incl. 780 door)" data-dims="d-fn" data-len="2930" x1="137" y1="448" x2="430" y2="448"/>
+        <line class="hit" data-name="Bedroom 1, chimney breast, front" data-dims="d-fe" data-len="1070" x1="137" y1="341" x2="137" y2="448"/>
+        <line class="hit" data-name="Bedroom 1, chimney breast, south side" data-dims="d-fe" data-len="370" x1="100" y1="341" x2="137" y2="341"/>
+        <line class="hit" data-name="Bedroom 1, east wall" data-dims="d-fe" data-len="2710" x1="100" y1="70" x2="100" y2="341"/>
+        <line class="hit" data-name="Bedroom 2, east wall" data-dims="d-f2e" data-len="3060" x1="100" y1="448" x2="100" y2="754"/>
+        <line class="hit" data-name="Bedroom 2, north wall (window)" data-dims="d-f2n" data-len="2020" x1="100" y1="754" x2="302" y2="754"/>
+        <line class="hit" data-name="Bedroom 2, west wall (incl. 780 door)" data-dims="d-f2w" data-len="3060" x1="302" y1="448" x2="302" y2="754"/>
+        <line class="hit" data-name="Bedroom 3, south wall (incl. 780 door)" data-dims="d-f3s" data-len="2030" x1="317" y1="537" x2="520" y2="537"/>
+        <line class="hit" data-name="Bedroom 3, east wall" data-dims="d-f3e" data-len="2170" x1="317" y1="537" x2="317" y2="754"/>
+        <line class="hit" data-name="Bedroom 3, north wall (window)" data-dims="d-f3n" data-len="2030" x1="317" y1="754" x2="520" y2="754"/>
+        <line class="hit" data-name="Bedroom 3, west wall" data-dims="d-f3w" data-len="2170" x1="520" y1="537" x2="520" y2="754"/>
+        <line class="hit" data-name="Door to Bedroom 1" data-dims="d-fn" data-len="780" x1="317" y1="448" x2="395" y2="448"/>
+        <line class="hit" data-name="Door to Bedroom 2" data-dims="d-f2w" data-len="780" x1="302" y1="448" x2="302" y2="526"/>
+        <line class="hit" data-name="Door to Bedroom 3" data-dims="d-f3s" data-len="780" x1="317" y1="537" x2="395" y2="537"/>
       </g>
     </svg>
 
     <aside>
       <table id="ftable" style="display:none">
         <tr><th>Ref</th><th>Measures</th><th>mm</th></tr>
-        <tr data-dims="d-fs"><td>3300</td><td>South wall: east corner &#8594; west section (window wall)</td><td>3300</td></tr>
+        <tr data-dims="d-fs"><td>4200</td><td>South wall, east wall &#8594; west wall</td><td>4200</td></tr>
+        <tr data-dims="d-fs"><td>655</td><td>East wall &#8594; window</td><td>655</td></tr>
+        <tr data-dims="d-fs"><td>1590</td><td>Window width</td><td>1590</td></tr>
+        <tr data-dims="d-fs"><td>1055</td><td>Window &#8594; west section (3300 &#8722; 655 &#8722; 1590)</td><td>1055 <span class="warnbadge">derived</span></td></tr>
         <tr data-dims="d-fs"><td>900</td><td>South wall, west section</td><td>900</td></tr>
-        <tr data-dims="d-fs"><td>Window</td><td>Large window, centred on the 3300 wall</td><td><span class="warnbadge">TBC</span></td></tr>
+        <tr data-dims="d-fs"><td>700</td><td>Floor &#8594; window sill</td><td>700</td></tr>
+        <tr data-dims="d-fs"><td>1200</td><td>Window height (head at 1900)</td><td>1200</td></tr>
         <tr data-dims="d-fe"><td>3780</td><td>East side, south wall &#8594; north wall (wall line)</td><td>3780</td></tr>
         <tr data-dims="d-fe"><td>2710</td><td>East wall: south wall &#8594; chimney breast</td><td>2710</td></tr>
         <tr data-dims="d-fe"><td>370</td><td>Chimney breast depth into room</td><td>370</td></tr>
         <tr data-dims="d-fe"><td>1070</td><td>Chimney breast &#8594; north wall</td><td>1070</td></tr>
         <tr data-dims="d-fn"><td>2930</td><td>North wall: chimney breast &#8594; west wall</td><td>2930</td></tr>
-        <tr data-dims="d-fn"><td>1750</td><td>Chimney breast &#8594; door (2930 &#8722; 780 &#8722; 400)</td><td>1750 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-fn"><td>1800</td><td>Chimney breast &#8594; door (2930 &#8722; 780 &#8722; 350)</td><td>1800 <span class="warnbadge">derived</span></td></tr>
         <tr data-dims="d-fn"><td>780</td><td>Door, same width as the upper room/Library door</td><td>780 <span class="warnbadge">assumed</span></td></tr>
-        <tr data-dims="d-fn"><td>400</td><td>Door &#8594; west wall</td><td>400</td></tr>
+        <tr data-dims="d-fn"><td>350</td><td>Door &#8594; west wall (tape read 400; moved 50 west to line up with the landing)</td><td>350 <span class="warnbadge">adjusted</span></td></tr>
         <tr data-dims="d-fw"><td>1830</td><td>West wall, south section</td><td>1830</td></tr>
         <tr data-dims="d-fw"><td>900</td><td>West wall step, back east</td><td>900</td></tr>
-        <tr data-dims="d-fw"><td>1950</td><td>West wall, north section (3780 &#8722; 1830, confirm with tape)</td><td>1950 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-fw"><td>1950</td><td>West wall, north section</td><td>1950</td></tr>
+        <tr data-dims="d-f2e"><td>3060</td><td>Bedroom 2, east wall</td><td>3060</td></tr>
+        <tr data-dims="d-f2n"><td>2020</td><td>Bedroom 2, north wall</td><td>2020</td></tr>
+        <tr data-dims="d-f2n"><td>500 / 1090 / 430</td><td>East wall &#8594; window, window, window &#8594; west wall (sill 710, height 1170)</td><td>2020</td></tr>
+        <tr data-dims="d-f2w"><td>3060</td><td>Bedroom 2, west wall incl. door</td><td>3060</td></tr>
+        <tr data-dims="d-f2w"><td>780</td><td>Door to Bedroom 2, from the landing</td><td>780</td></tr>
+        <tr data-dims="d-f2w"><td>2280</td><td>Door &#8594; north wall</td><td>2280 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-f2w"><td>150</td><td>Wall between Bedroom 2 and the landing / Bedroom 3 (4200 &#8722; 2020 &#8722; 2030)</td><td>150 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-fl"><td>930</td><td>Landing, east to west</td><td>930</td></tr>
+        <tr data-dims="d-fl"><td>820</td><td>Landing, north to south</td><td>820</td></tr>
+        <tr data-dims="d-fl"><td>Stairs</td><td>West side open to the stairs: one step, then the turn into the west strip</td><td>200 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-f3s"><td>2030</td><td>Bedroom 3, south wall incl. door</td><td>2030</td></tr>
+        <tr data-dims="d-f3s"><td>780</td><td>Door to Bedroom 3, from the landing</td><td>780</td></tr>
+        <tr data-dims="d-f3s"><td>1250</td><td>Door &#8594; west wall</td><td>1250 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-f3s"><td>70</td><td>Wall between the landing and Bedroom 3 (3060 &#8722; 820 &#8722; 2170)</td><td>70 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-f3e"><td>2170</td><td>Bedroom 3, east wall</td><td>2170</td></tr>
+        <tr data-dims="d-f3n"><td>2030</td><td>Bedroom 3, north wall</td><td>2030</td></tr>
+        <tr data-dims="d-f3n"><td>477.5 / 1075 / 477.5</td><td>Window centred (sill 680, height 1180)</td><td>2030</td></tr>
+        <tr data-dims="d-f3w"><td>2170</td><td>Bedroom 3, west wall</td><td>2170</td></tr>
+        <tr data-dims="d-fs d-fe d-fn d-fw d-f2e d-f2n d-f2w d-fl d-f3s d-f3e d-f3n d-f3w"><td>Ceiling</td><td>floor &#8594; ceiling (coved)</td><td>2440</td></tr>
       </table>
 
       <div class="legend">
         <p>
-          <span class="sw e"></span>Wall<br>
-          <span class="sw w"></span>Window (size to be measured)<br>
+          <span class="sw e"></span>External wall<br>
+          <span class="sw i"></span>Internal wall<br>
+          <span class="sw t"></span>Wall thickness (derived)<br>
+          <span class="sw s"></span>Stairwell<br>
+          <span class="sw w"></span>Window<br>
           <span class="sw d"></span>Door opening
         </p>
       </div>
@@ -999,8 +1161,452 @@
   <div class="sheethead">
     <h1>First Floor: 3D View</h1>
   </div>
-  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. The window is a placeholder until it's measured.</p>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green, stairwell teal.</p>
   <div id="f3dmount"></div>
+</div>
+
+<div class="sheet" id="bed1">
+  <div class="sheethead">
+  <h1>Bedroom 1</h1>
+  <svg class="rose" width="74" height="74" viewBox="0 0 100 100" aria-label="Compass — top of drawing is due south">
+    <circle cx="50" cy="50" r="35" fill="#fff" stroke="#c7d0dc" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="#e4e9f0" stroke-width="1"/>
+    <g fill="#94a1b3">
+      <polygon points="50,50 61,39 58.2,46.8"/>
+      <polygon points="50,50 61,61 53.2,58.2"/>
+      <polygon points="50,50 39,61 41.8,53.2"/>
+      <polygon points="50,50 39,39 46.8,41.8"/>
+    </g>
+    <polygon points="50,17 55.5,50 50,50" fill="#b23b3b"/>
+    <polygon points="50,17 44.5,50 50,50" fill="#d98080"/>
+    <polygon points="50,83 44.5,50 50,50" fill="#1f3a5f"/>
+    <polygon points="50,83 55.5,50 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,45.2 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,54.8 50,50" fill="#1f3a5f"/>
+    <polygon points="80,50 50,54.8 50,50" fill="#8fa1bb"/>
+    <polygon points="80,50 50,45.2 50,50" fill="#1f3a5f"/>
+    <circle cx="50" cy="50" r="2.6" fill="#fff" stroke="#1f3a5f" stroke-width="1.4"/>
+    <text class="s" x="50" y="10" text-anchor="middle">S</text>
+    <text x="50" y="97" text-anchor="middle">N</text>
+    <text x="7" y="54" text-anchor="middle">E</text>
+    <text x="93" y="54" text-anchor="middle">W</text>
+  </svg>
+  </div>
+
+  <div class="layout">
+    <!-- mm to px: x*0.1+100, y*0.1+70. Same axes as the first-floor plan -->
+    <svg id="b1plan" width="600" height="500" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="100,70 520,70 520,253 430,253 430,448 137,448 137,341 100,341" fill="var(--fill)"/>
+      <rect x="100" y="341" width="37" height="107" fill="#e6e1da"/>
+
+      <path class="ext" d="M317,448 H137 V341 H100 V70 H520 V253 H430 V448 H395"/>
+
+      <rect x="165.5" y="65" width="159" height="10" fill="#fff"/>
+      <line class="win" x1="165.5" y1="68" x2="324.5" y2="68"/>
+      <line class="win" x1="165.5" y1="72" x2="324.5" y2="72"/>
+      <line class="win" x1="165.5" y1="65" x2="165.5" y2="75"/>
+      <line class="win" x1="324.5" y1="65" x2="324.5" y2="75"/>
+
+      <line class="doorline" x1="317" y1="448" x2="395" y2="448"/>
+      <g pointer-events="none">
+        <line class="leaf" x1="395" y1="448" x2="395" y2="370"/>
+        <path class="swing" d="M395,370 A78,78 0 0 0 317,448"/>
+      </g>
+
+      <text class="roomlabel" x="265" y="250">Bedroom 1</text>
+      <text class="roomarea"  x="265" y="266">13.73 m&#178; usable</text>
+
+      <g class="dimg" id="d-b1s">
+        <line class="dim" x1="100" y1="88" x2="520" y2="88"/>
+        <line class="tick" x1="96" y1="92" x2="104" y2="84"/><line class="tick" x1="516" y1="92" x2="524" y2="84"/>
+        <text class="dimlabel" x="310" y="102" text-anchor="middle">4200</text>
+        <line class="extn" x1="100" y1="62" x2="100" y2="42"/>
+        <line class="extn" x1="165.5" y1="62" x2="165.5" y2="42"/>
+        <line class="extn" x1="324.5" y1="62" x2="324.5" y2="42"/>
+        <line class="extn" x1="430" y1="66" x2="430" y2="42"/>
+        <line class="extn" x1="520" y1="66" x2="520" y2="42"/>
+        <line class="dim" x1="100" y1="48" x2="520" y2="48"/>
+        <line class="tick" x1="96" y1="52" x2="104" y2="44"/><line class="tick" x1="161.5" y1="52" x2="169.5" y2="44"/><line class="tick" x1="320.5" y1="52" x2="328.5" y2="44"/><line class="tick" x1="426" y1="52" x2="434" y2="44"/><line class="tick" x1="516" y1="52" x2="524" y2="44"/>
+        <text class="dimlabel" x="132.75" y="43" text-anchor="middle">655</text>
+        <text class="dimlabel" x="245" y="43" text-anchor="middle">1590</text>
+        <text class="dimlabel" x="377.25" y="43" text-anchor="middle">1055</text>
+        <text class="dimlabel" x="475" y="43" text-anchor="middle">900</text>
+      </g>
+
+      <g class="dimg" id="d-b1e">
+        <line class="dim" x1="160" y1="70" x2="160" y2="448"/>
+        <line class="tick" x1="156" y1="74" x2="164" y2="66"/>
+        <line class="tick" x1="156" y1="452" x2="164" y2="444"/>
+        <text class="dimlabel" x="174" y="200" text-anchor="middle" transform="rotate(-90 174 200)">3780</text>
+        <line class="extn" x1="96" y1="70"  x2="72" y2="70"/>
+        <line class="extn" x1="96" y1="341" x2="72" y2="341"/>
+        <line class="extn" x1="133" y1="448" x2="72" y2="448"/>
+        <line class="dim" x1="78" y1="70" x2="78" y2="448"/>
+        <line class="tick" x1="74" y1="74" x2="82" y2="66"/>
+        <line class="tick" x1="74" y1="345" x2="82" y2="337"/>
+        <line class="tick" x1="74" y1="452" x2="82" y2="444"/>
+        <text class="dimlabel" x="73" y="205.5" text-anchor="middle" transform="rotate(-90 73 205.5)">2710</text>
+        <text class="dimlabel" x="73" y="394.5" text-anchor="middle" transform="rotate(-90 73 394.5)">1070</text>
+        <line class="dim" x1="100" y1="332" x2="137" y2="332"/>
+        <line class="tick" x1="96" y1="336" x2="104" y2="328"/>
+        <line class="tick" x1="133" y1="336" x2="141" y2="328"/>
+        <text class="dimlabel" x="118.5" y="327" text-anchor="middle">370</text>
+      </g>
+
+      <g class="dimg" id="d-b1w">
+        <line class="extn" x1="524" y1="70"  x2="548" y2="70"/>
+        <line class="extn" x1="524" y1="253" x2="548" y2="253"/>
+        <line class="extn" x1="434" y1="448" x2="548" y2="448"/>
+        <line class="dim" x1="542" y1="70" x2="542" y2="448"/>
+        <line class="tick" x1="538" y1="74" x2="546" y2="66"/>
+        <line class="tick" x1="538" y1="257" x2="546" y2="249"/>
+        <line class="tick" x1="538" y1="452" x2="546" y2="444"/>
+        <text class="dimlabel" x="556" y="161.5" text-anchor="middle" transform="rotate(-90 556 161.5)">1830</text>
+        <text class="dimlabel" x="556" y="350.5" text-anchor="middle" transform="rotate(-90 556 350.5)">1950</text>
+        <line class="dim" x1="430" y1="268" x2="520" y2="268"/>
+        <line class="tick" x1="426" y1="272" x2="434" y2="264"/>
+        <line class="tick" x1="516" y1="272" x2="524" y2="264"/>
+        <text class="dimlabel" x="475" y="283" text-anchor="middle">900</text>
+      </g>
+
+      <g class="dimg" id="d-b1n">
+        <line class="dim" x1="137" y1="430" x2="430" y2="430"/>
+        <line class="tick" x1="133" y1="434" x2="141" y2="426"/><line class="tick" x1="426" y1="434" x2="434" y2="426"/>
+        <text class="dimlabel" x="225" y="425" text-anchor="middle">2930</text>
+        <line class="extn" x1="137" y1="452" x2="137" y2="478"/>
+        <line class="extn" x1="317" y1="452" x2="317" y2="478"/>
+        <line class="extn" x1="395" y1="452" x2="395" y2="478"/>
+        <line class="extn" x1="430" y1="452" x2="430" y2="478"/>
+        <line class="dim" x1="137" y1="472" x2="430" y2="472"/>
+        <line class="tick" x1="133" y1="476" x2="141" y2="468"/><line class="tick" x1="313" y1="476" x2="321" y2="468"/><line class="tick" x1="391" y1="476" x2="399" y2="468"/><line class="tick" x1="426" y1="476" x2="434" y2="468"/>
+        <text class="dimlabel" x="227" y="490" text-anchor="middle">1800</text>
+        <text class="dimlabel" x="356" y="490" text-anchor="middle">780</text>
+        <text class="dimlabel" x="412.5" y="490" text-anchor="middle">350</text>
+      </g>
+
+      <g id="b1hits">
+        <line class="hit" data-wall="b1south" data-dims="d-b1s" data-name="South wall (window)" data-len="4200" x1="100" y1="70" x2="520" y2="70"/>
+        <line class="hit" data-wall="b1wests" data-dims="d-b1w" data-name="West wall, south section" data-len="1830" x1="520" y1="70" x2="520" y2="253"/>
+        <line class="hit" data-wall="b1step" data-dims="d-b1w" data-name="West wall step" data-len="900" x1="430" y1="253" x2="520" y2="253"/>
+        <line class="hit" data-wall="b1westn" data-dims="d-b1w" data-name="West wall, north section" data-len="1950" x1="430" y1="253" x2="430" y2="448"/>
+        <line class="hit" data-wall="b1north" data-dims="d-b1n" data-name="North wall (incl. 780 door)" data-len="2930" x1="137" y1="448" x2="430" y2="448"/>
+        <line class="hit" data-wall="b1chimf" data-dims="d-b1e" data-name="Chimney breast, front" data-len="1070" x1="137" y1="341" x2="137" y2="448"/>
+        <line class="hit" data-wall="b1chims" data-dims="d-b1e" data-name="Chimney breast, south side" data-len="370" x1="100" y1="341" x2="137" y2="341"/>
+        <line class="hit" data-wall="b1east" data-dims="d-b1e" data-name="East wall" data-len="2710" x1="100" y1="70" x2="100" y2="341"/>
+        <line class="hit" data-wall="b1north" data-dims="d-b1n" data-name="Door to Bedroom 1" data-len="780" x1="317" y1="448" x2="395" y2="448"/>
+      </g>
+    </svg>
+
+    <aside>
+      <table id="b1table" style="display:none">
+        <tr><th>Ref</th><th>Measures</th><th>mm</th></tr>
+        <tr data-dims="d-b1s"><td>4200</td><td>South wall, east wall &#8594; west wall</td><td>4200</td></tr>
+        <tr data-dims="d-b1s"><td>655</td><td>East wall &#8594; window</td><td>655</td></tr>
+        <tr data-dims="d-b1s"><td>1590</td><td>Window width</td><td>1590</td></tr>
+        <tr data-dims="d-b1s"><td>1055</td><td>Window &#8594; west section (3300 &#8722; 655 &#8722; 1590)</td><td>1055 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-b1s"><td>900</td><td>South wall, west section</td><td>900</td></tr>
+        <tr data-dims="d-b1s"><td>700</td><td>Floor &#8594; window sill</td><td>700</td></tr>
+        <tr data-dims="d-b1s"><td>1200</td><td>Window height (head at 1900)</td><td>1200</td></tr>
+        <tr data-dims="d-b1e"><td>3780</td><td>East side, south wall &#8594; north wall (wall line)</td><td>3780</td></tr>
+        <tr data-dims="d-b1e"><td>2710</td><td>East wall: south wall &#8594; chimney breast</td><td>2710</td></tr>
+        <tr data-dims="d-b1e"><td>370</td><td>Chimney breast depth into room</td><td>370</td></tr>
+        <tr data-dims="d-b1e"><td>1070</td><td>Chimney breast &#8594; north wall</td><td>1070</td></tr>
+        <tr data-dims="d-b1n"><td>2930</td><td>North wall: chimney breast &#8594; west wall</td><td>2930</td></tr>
+        <tr data-dims="d-b1n"><td>1800</td><td>Chimney breast &#8594; door (2930 &#8722; 780 &#8722; 350)</td><td>1800 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-b1n"><td>780</td><td>Door, same width as the upper room/Library door</td><td>780 <span class="warnbadge">assumed</span></td></tr>
+        <tr data-dims="d-b1n"><td>350</td><td>Door &#8594; west wall (tape read 400; moved 50 west to line up with the landing)</td><td>350 <span class="warnbadge">adjusted</span></td></tr>
+        <tr data-dims="d-b1w"><td>1830</td><td>West wall, south section</td><td>1830</td></tr>
+        <tr data-dims="d-b1w"><td>900</td><td>West wall step, back east</td><td>900</td></tr>
+        <tr data-dims="d-b1w"><td>1950</td><td>West wall, north section</td><td>1950</td></tr>
+        <tr data-dims="d-b1s d-b1e d-b1n d-b1w"><td>Ceiling</td><td>floor &#8594; ceiling (coved)</td><td>2440</td></tr>
+      </table>
+    </aside>
+  </div>
+
+  <div class="elevwrap" id="b1elev-wrap">
+    <h3 id="b1elev-title">Front-on view</h3>
+    <p class="hintline" id="b1elev-hint">Click a wall on the plan above to see it face-on with its measurements.</p>
+    <div class="elev" id="b1elev"></div>
+  </div>
+</div>
+
+<div class="sheet" id="b13d">
+  <div class="sheethead">
+    <h1>Bedroom 1: 3D View</h1>
+  </div>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green.</p>
+  <div id="b13dmount"></div>
+</div>
+
+<div class="sheet" id="bed2">
+  <div class="sheethead">
+  <h1>Bedroom 2</h1>
+  <svg class="rose" width="74" height="74" viewBox="0 0 100 100" aria-label="Compass — top of drawing is due south">
+    <circle cx="50" cy="50" r="35" fill="#fff" stroke="#c7d0dc" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="#e4e9f0" stroke-width="1"/>
+    <g fill="#94a1b3">
+      <polygon points="50,50 61,39 58.2,46.8"/>
+      <polygon points="50,50 61,61 53.2,58.2"/>
+      <polygon points="50,50 39,61 41.8,53.2"/>
+      <polygon points="50,50 39,39 46.8,41.8"/>
+    </g>
+    <polygon points="50,17 55.5,50 50,50" fill="#b23b3b"/>
+    <polygon points="50,17 44.5,50 50,50" fill="#d98080"/>
+    <polygon points="50,83 44.5,50 50,50" fill="#1f3a5f"/>
+    <polygon points="50,83 55.5,50 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,45.2 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,54.8 50,50" fill="#1f3a5f"/>
+    <polygon points="80,50 50,54.8 50,50" fill="#8fa1bb"/>
+    <polygon points="80,50 50,45.2 50,50" fill="#1f3a5f"/>
+    <circle cx="50" cy="50" r="2.6" fill="#fff" stroke="#1f3a5f" stroke-width="1.4"/>
+    <text class="s" x="50" y="10" text-anchor="middle">S</text>
+    <text x="50" y="97" text-anchor="middle">N</text>
+    <text x="7" y="54" text-anchor="middle">E</text>
+    <text x="93" y="54" text-anchor="middle">W</text>
+  </svg>
+  </div>
+
+  <div class="layout">
+    <!-- mm to px: x*0.1+100, y*0.1+40 (x = west of the room's east wall, y = north of its south wall) -->
+    <svg id="b2plan" width="420" height="400" viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg">
+      <rect x="100" y="40" width="202" height="306" fill="var(--fill)"/>
+
+      <path class="ext" d="M302,118 V346 H100 V40 H302"/>
+
+      <line class="doorline" x1="302" y1="40" x2="302" y2="118"/>
+      <g pointer-events="none">
+        <line class="leaf" x1="302" y1="118" x2="224" y2="118"/>
+        <path class="swing" d="M224,118 A78,78 0 0 1 302,40"/>
+      </g>
+
+      <g>
+        <rect x="150" y="341" width="109" height="10" fill="#fff"/>
+        <line class="win" x1="150" y1="344" x2="259" y2="344"/>
+        <line class="win" x1="150" y1="348" x2="259" y2="348"/>
+        <line class="win" x1="150" y1="341" x2="150" y2="351"/>
+        <line class="win" x1="259" y1="341" x2="259" y2="351"/>
+      </g>
+
+      <text class="roomlabel" x="201" y="210">Bedroom 2</text>
+      <text class="roomarea"  x="201" y="226">6.18 m&#178;</text>
+
+      <g class="dimg" id="d-b2s">
+        <line class="extn" x1="100" y1="36" x2="100" y2="14"/>
+        <line class="extn" x1="302" y1="36" x2="302" y2="14"/>
+        <line class="dim" x1="100" y1="20" x2="302" y2="20"/>
+        <line class="tick" x1="96" y1="24" x2="104" y2="16"/><line class="tick" x1="298" y1="24" x2="306" y2="16"/>
+        <text class="dimlabel" x="201" y="15" text-anchor="middle">2020</text>
+      </g>
+      <g class="dimg" id="d-b2e">
+        <line class="extn" x1="96" y1="40" x2="72" y2="40"/>
+        <line class="extn" x1="96" y1="346" x2="72" y2="346"/>
+        <line class="dim" x1="78" y1="40" x2="78" y2="346"/>
+        <line class="tick" x1="74" y1="44" x2="82" y2="36"/><line class="tick" x1="74" y1="350" x2="82" y2="342"/>
+        <text class="dimlabel" x="73" y="193" text-anchor="middle" transform="rotate(-90 73 193)">3060</text>
+      </g>
+      <g class="dimg" id="d-b2n">
+        <line class="dim" x1="100" y1="330" x2="302" y2="330"/>
+        <line class="tick" x1="96" y1="334" x2="104" y2="326"/><line class="tick" x1="298" y1="334" x2="306" y2="326"/>
+        <text class="dimlabel" x="201" y="325" text-anchor="middle">2020</text>
+        <line class="extn" x1="100" y1="355" x2="100" y2="374"/>
+        <line class="extn" x1="150" y1="355" x2="150" y2="374"/>
+        <line class="extn" x1="259" y1="355" x2="259" y2="374"/>
+        <line class="extn" x1="302" y1="355" x2="302" y2="374"/>
+        <line class="dim" x1="100" y1="368" x2="302" y2="368"/>
+        <line class="tick" x1="96" y1="372" x2="104" y2="364"/><line class="tick" x1="146" y1="372" x2="154" y2="364"/><line class="tick" x1="255" y1="372" x2="263" y2="364"/><line class="tick" x1="298" y1="372" x2="306" y2="364"/>
+        <text class="dimlabel" x="125" y="386" text-anchor="middle">500</text>
+        <text class="dimlabel" x="204.5" y="386" text-anchor="middle">1090</text>
+        <text class="dimlabel" x="280.5" y="386" text-anchor="middle">430</text>
+      </g>
+      <g class="dimg" id="d-b2w">
+        <line class="dim" x1="286" y1="40" x2="286" y2="346"/>
+        <line class="tick" x1="282" y1="44" x2="290" y2="36"/><line class="tick" x1="282" y1="350" x2="290" y2="342"/>
+        <text class="dimlabel" x="278" y="232" text-anchor="middle" transform="rotate(-90 278 232)">3060</text>
+        <line class="extn" x1="306" y1="40" x2="330" y2="40"/>
+        <line class="extn" x1="306" y1="118" x2="330" y2="118"/>
+        <line class="extn" x1="306" y1="346" x2="330" y2="346"/>
+        <line class="dim" x1="324" y1="40" x2="324" y2="346"/>
+        <line class="tick" x1="320" y1="44" x2="328" y2="36"/><line class="tick" x1="320" y1="122" x2="328" y2="114"/><line class="tick" x1="320" y1="350" x2="328" y2="342"/>
+        <text class="dimlabel" x="338" y="79" text-anchor="middle" transform="rotate(-90 338 79)">780</text>
+        <text class="dimlabel" x="338" y="232" text-anchor="middle" transform="rotate(-90 338 232)">2280</text>
+      </g>
+
+      <g id="b2hits">
+        <line class="hit" data-wall="b2south" data-dims="d-b2s" data-name="South wall" data-len="2020" x1="100" y1="40" x2="302" y2="40"/>
+        <line class="hit" data-wall="b2east" data-dims="d-b2e" data-name="East wall" data-len="3060" x1="100" y1="40" x2="100" y2="346"/>
+        <line class="hit" data-wall="b2north" data-dims="d-b2n" data-name="North wall (window)" data-len="2020" x1="100" y1="346" x2="302" y2="346"/>
+        <line class="hit" data-wall="b2west" data-dims="d-b2w" data-name="West wall (incl. 780 door)" data-len="3060" x1="302" y1="40" x2="302" y2="346"/>
+        <line class="hit" data-wall="b2west" data-dims="d-b2w" data-name="Door to Bedroom 2" data-len="780" x1="302" y1="40" x2="302" y2="118"/>
+      </g>
+    </svg>
+
+    <aside>
+      <table id="b2table" style="display:none">
+        <tr><th>Ref</th><th>Measures</th><th>mm</th></tr>
+        <tr data-dims="d-b2s"><td>2020</td><td>South wall</td><td>2020</td></tr>
+        <tr data-dims="d-b2e"><td>3060</td><td>East wall</td><td>3060</td></tr>
+        <tr data-dims="d-b2n"><td>2020</td><td>North wall (window wall)</td><td>2020</td></tr>
+        <tr data-dims="d-b2n"><td>500</td><td>East wall &#8594; window</td><td>500</td></tr>
+        <tr data-dims="d-b2n"><td>1090</td><td>Window width</td><td>1090</td></tr>
+        <tr data-dims="d-b2n"><td>430</td><td>Window &#8594; west wall</td><td>430</td></tr>
+        <tr data-dims="d-b2n"><td>710</td><td>Floor &#8594; window sill</td><td>710</td></tr>
+        <tr data-dims="d-b2n"><td>1170</td><td>Window height (head at 1880)</td><td>1170</td></tr>
+        <tr data-dims="d-b2w"><td>3060</td><td>West wall, incl. door</td><td>3060</td></tr>
+        <tr data-dims="d-b2w"><td>780</td><td>Door at the south end, standard width</td><td>780</td></tr>
+        <tr data-dims="d-b2w"><td>2280</td><td>Door &#8594; north wall (tape read 2300)</td><td>2280 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-b2s d-b2e d-b2n d-b2w"><td>Ceiling</td><td>floor &#8594; ceiling (coved)</td><td>2440</td></tr>
+      </table>
+    </aside>
+  </div>
+
+  <div class="elevwrap" id="b2elev-wrap">
+    <h3 id="b2elev-title">Front-on view</h3>
+    <p class="hintline" id="b2elev-hint">Click a wall on the plan above to see it face-on with its measurements.</p>
+    <div class="elev" id="b2elev"></div>
+  </div>
+</div>
+
+<div class="sheet" id="b23d">
+  <div class="sheethead">
+    <h1>Bedroom 2: 3D View</h1>
+  </div>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green.</p>
+  <div id="b23dmount"></div>
+</div>
+
+<div class="sheet" id="bed3">
+  <div class="sheethead">
+  <h1>Bedroom 3</h1>
+  <svg class="rose" width="74" height="74" viewBox="0 0 100 100" aria-label="Compass — top of drawing is due south">
+    <circle cx="50" cy="50" r="35" fill="#fff" stroke="#c7d0dc" stroke-width="1.5"/>
+    <circle cx="50" cy="50" r="29" fill="none" stroke="#e4e9f0" stroke-width="1"/>
+    <g fill="#94a1b3">
+      <polygon points="50,50 61,39 58.2,46.8"/>
+      <polygon points="50,50 61,61 53.2,58.2"/>
+      <polygon points="50,50 39,61 41.8,53.2"/>
+      <polygon points="50,50 39,39 46.8,41.8"/>
+    </g>
+    <polygon points="50,17 55.5,50 50,50" fill="#b23b3b"/>
+    <polygon points="50,17 44.5,50 50,50" fill="#d98080"/>
+    <polygon points="50,83 44.5,50 50,50" fill="#1f3a5f"/>
+    <polygon points="50,83 55.5,50 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,45.2 50,50" fill="#8fa1bb"/>
+    <polygon points="20,50 50,54.8 50,50" fill="#1f3a5f"/>
+    <polygon points="80,50 50,54.8 50,50" fill="#8fa1bb"/>
+    <polygon points="80,50 50,45.2 50,50" fill="#1f3a5f"/>
+    <circle cx="50" cy="50" r="2.6" fill="#fff" stroke="#1f3a5f" stroke-width="1.4"/>
+    <text class="s" x="50" y="10" text-anchor="middle">S</text>
+    <text x="50" y="97" text-anchor="middle">N</text>
+    <text x="7" y="54" text-anchor="middle">E</text>
+    <text x="93" y="54" text-anchor="middle">W</text>
+  </svg>
+  </div>
+
+  <div class="layout">
+    <!-- mm to px: x*0.1+100, y*0.1+40 (x = west of the room's east wall, y = north of its south wall) -->
+    <svg id="b3plan" width="400" height="310" viewBox="0 0 400 310" xmlns="http://www.w3.org/2000/svg">
+      <rect x="100" y="40" width="203" height="217" fill="var(--fill)"/>
+
+      <path class="ext" d="M178,40 H303 V257 H100 V40"/>
+
+      <line class="doorline" x1="100" y1="40" x2="178" y2="40"/>
+      <g pointer-events="none">
+        <line class="leaf" x1="104" y1="40" x2="104" y2="114"/>
+        <path class="swing" d="M104,114 A74,74 0 0 0 178,40"/>
+      </g>
+
+      <g>
+        <rect x="147.75" y="252" width="107.5" height="10" fill="#fff"/>
+        <line class="win" x1="147.75" y1="255" x2="255.25" y2="255"/>
+        <line class="win" x1="147.75" y1="259" x2="255.25" y2="259"/>
+        <line class="win" x1="147.75" y1="252" x2="147.75" y2="262"/>
+        <line class="win" x1="255.25" y1="252" x2="255.25" y2="262"/>
+      </g>
+
+      <text class="roomlabel" x="201.5" y="160">Bedroom 3</text>
+      <text class="roomarea"  x="201.5" y="176">4.41 m&#178;</text>
+
+      <g class="dimg" id="d-b3s">
+        <line class="dim" x1="100" y1="56" x2="303" y2="56"/>
+        <line class="tick" x1="96" y1="60" x2="104" y2="52"/><line class="tick" x1="299" y1="60" x2="307" y2="52"/>
+        <text class="dimlabel" x="240" y="70" text-anchor="middle">2030</text>
+        <line class="extn" x1="100" y1="36" x2="100" y2="14"/>
+        <line class="extn" x1="178" y1="36" x2="178" y2="14"/>
+        <line class="extn" x1="303" y1="36" x2="303" y2="14"/>
+        <line class="dim" x1="100" y1="20" x2="303" y2="20"/>
+        <line class="tick" x1="96" y1="24" x2="104" y2="16"/><line class="tick" x1="174" y1="24" x2="182" y2="16"/><line class="tick" x1="299" y1="24" x2="307" y2="16"/>
+        <text class="dimlabel" x="139" y="15" text-anchor="middle">780</text>
+        <text class="dimlabel" x="240.5" y="15" text-anchor="middle">1250</text>
+      </g>
+      <g class="dimg" id="d-b3e">
+        <line class="extn" x1="96" y1="40" x2="72" y2="40"/>
+        <line class="extn" x1="96" y1="257" x2="72" y2="257"/>
+        <line class="dim" x1="78" y1="40" x2="78" y2="257"/>
+        <line class="tick" x1="74" y1="44" x2="82" y2="36"/><line class="tick" x1="74" y1="261" x2="82" y2="253"/>
+        <text class="dimlabel" x="73" y="148.5" text-anchor="middle" transform="rotate(-90 73 148.5)">2170</text>
+      </g>
+      <g class="dimg" id="d-b3n">
+        <line class="dim" x1="100" y1="241" x2="303" y2="241"/>
+        <line class="tick" x1="96" y1="245" x2="104" y2="237"/><line class="tick" x1="299" y1="245" x2="307" y2="237"/>
+        <text class="dimlabel" x="201.5" y="236" text-anchor="middle">2030</text>
+        <line class="extn" x1="100" y1="266" x2="100" y2="285"/>
+        <line class="extn" x1="147.75" y1="266" x2="147.75" y2="285"/>
+        <line class="extn" x1="255.25" y1="266" x2="255.25" y2="285"/>
+        <line class="extn" x1="303" y1="266" x2="303" y2="285"/>
+        <line class="dim" x1="100" y1="279" x2="303" y2="279"/>
+        <line class="tick" x1="96" y1="283" x2="104" y2="275"/><line class="tick" x1="143.75" y1="283" x2="151.75" y2="275"/><line class="tick" x1="251.25" y1="283" x2="259.25" y2="275"/><line class="tick" x1="299" y1="283" x2="307" y2="275"/>
+        <text class="dimlabel" x="124" y="297" text-anchor="middle">477.5</text>
+        <text class="dimlabel" x="201.5" y="297" text-anchor="middle">1075</text>
+        <text class="dimlabel" x="279" y="297" text-anchor="middle">477.5</text>
+      </g>
+      <g class="dimg" id="d-b3w">
+        <line class="extn" x1="307" y1="40" x2="331" y2="40"/>
+        <line class="extn" x1="307" y1="257" x2="331" y2="257"/>
+        <line class="dim" x1="325" y1="40" x2="325" y2="257"/>
+        <line class="tick" x1="321" y1="44" x2="329" y2="36"/><line class="tick" x1="321" y1="261" x2="329" y2="253"/>
+        <text class="dimlabel" x="339" y="148.5" text-anchor="middle" transform="rotate(-90 339 148.5)">2170</text>
+      </g>
+
+      <g id="b3hits">
+        <line class="hit" data-wall="b3south" data-dims="d-b3s" data-name="South wall (incl. 780 door)" data-len="2030" x1="100" y1="40" x2="303" y2="40"/>
+        <line class="hit" data-wall="b3south" data-dims="d-b3s" data-name="Door to Bedroom 3" data-len="780" x1="100" y1="40" x2="178" y2="40"/>
+        <line class="hit" data-wall="b3east" data-dims="d-b3e" data-name="East wall" data-len="2170" x1="100" y1="40" x2="100" y2="257"/>
+        <line class="hit" data-wall="b3north" data-dims="d-b3n" data-name="North wall (window)" data-len="2030" x1="100" y1="257" x2="303" y2="257"/>
+        <line class="hit" data-wall="b3west" data-dims="d-b3w" data-name="West wall" data-len="2170" x1="303" y1="40" x2="303" y2="257"/>
+      </g>
+    </svg>
+
+    <aside>
+      <table id="b3table" style="display:none">
+        <tr><th>Ref</th><th>Measures</th><th>mm</th></tr>
+        <tr data-dims="d-b3s"><td>2030</td><td>South wall, incl. door</td><td>2030</td></tr>
+        <tr data-dims="d-b3s"><td>780</td><td>Door at the east end, standard width</td><td>780</td></tr>
+        <tr data-dims="d-b3s"><td>1250</td><td>Door &#8594; west wall (tape read 1240)</td><td>1250 <span class="warnbadge">derived</span></td></tr>
+        <tr data-dims="d-b3e"><td>2170</td><td>East wall</td><td>2170</td></tr>
+        <tr data-dims="d-b3n"><td>2030</td><td>North wall (window wall)</td><td>2030</td></tr>
+        <tr data-dims="d-b3n"><td>477.5</td><td>Each wall &#8594; window (window centred)</td><td>477.5</td></tr>
+        <tr data-dims="d-b3n"><td>1075</td><td>Window width</td><td>1075</td></tr>
+        <tr data-dims="d-b3n"><td>680</td><td>Floor &#8594; window sill</td><td>680</td></tr>
+        <tr data-dims="d-b3n"><td>1180</td><td>Window height (head at 1860)</td><td>1180</td></tr>
+        <tr data-dims="d-b3w"><td>2170</td><td>West wall</td><td>2170</td></tr>
+        <tr data-dims="d-b3s d-b3e d-b3n d-b3w"><td>Ceiling</td><td>floor &#8594; ceiling (coved)</td><td>2440</td></tr>
+      </table>
+    </aside>
+  </div>
+
+  <div class="elevwrap" id="b3elev-wrap">
+    <h3 id="b3elev-title">Front-on view</h3>
+    <p class="hintline" id="b3elev-hint">Click a wall on the plan above to see it face-on with its measurements.</p>
+    <div class="elev" id="b3elev"></div>
+  </div>
+</div>
+
+<div class="sheet" id="b33d">
+  <div class="sheethead">
+    <h1>Bedroom 3: 3D View</h1>
+  </div>
+  <p class="k3dhint">Drag to orbit, scroll or pinch to zoom, right-drag to pan. The red arrow points south. Windows blue, door openings marked green.</p>
+  <div id="b33dmount"></div>
 </div>
 
 <script>
@@ -1088,7 +1694,7 @@ wirePlan({ svg: 'fplan', hits: 'fhits', sheet: 'first', table: 'ftable', infobar
 } }
 </script>
 <script type="module">
-var mounts = [document.getElementById('k3dmount'), document.getElementById('g3dmount'), document.getElementById('f3dmount'), document.getElementById('m3dmount')];
+var mounts = [document.getElementById('k3dmount'), document.getElementById('g3dmount'), document.getElementById('f3dmount'), document.getElementById('m3dmount'), document.getElementById('b23dmount'), document.getElementById('b33dmount'), document.getElementById('b13dmount')];
 try {
   const THREE = await import('three');
   const { OrbitControls } = await import('three/addons/controls/OrbitControls.js');
@@ -1128,18 +1734,19 @@ try {
       else box(w.at + off, cy, mid, thick, ht, len, mat, edges);
     }
 
+    const ceil = cfg.ceiling || H;
     cfg.walls.forEach(function (w) {
       let cur = w.from;
       const ops = (w.openings || []).slice().sort(function (p, q) { return p.a - q.a; });
       ops.forEach(function (o) {
-        wallPiece(w, cur, o.a, 0, H, wallMat, T, true);
-        wallPiece(w, o.a, o.b, o.top, H, wallMat, T, true);
-        if (o.bottom > 0) wallPiece(w, o.a, o.b, 0, o.bottom, wallMat, T, true);
+        wallPiece(w, cur, o.a, 0, ceil, wallMat, w.t || T, true);
+        wallPiece(w, o.a, o.b, o.top, ceil, wallMat, w.t || T, true);
+        if (o.bottom > 0) wallPiece(w, o.a, o.b, 0, o.bottom, wallMat, w.t || T, true);
         if (o.kind === 'win') wallPiece(w, o.a, o.b, o.bottom, o.top, paneMat, T / 4, false);
-        if (o.kind === 'door') wallPiece(w, o.a, o.b, 0, 25, doorMat, T, false);
+        if (o.kind === 'door') wallPiece(w, o.a, o.b, 0, 25, doorMat, w.t || T, false);
         cur = o.b;
       });
-      wallPiece(w, cur, w.to, 0, H, wallMat, T, true);
+      wallPiece(w, cur, w.to, 0, ceil, wallMat, w.t || T, true);
     });
 
     (cfg.stairs || []).forEach(function (st) { box(st[0], st[1], st[2], st[3], st[4], st[5], stairMat, true); });
@@ -1197,6 +1804,13 @@ try {
       new THREE.BufferGeometry().setFromPoints(cfg.outline.map(function (pt) { return new THREE.Vector3(pt[0] * SC, 0.002, pt[1] * SC); })),
       new THREE.LineBasicMaterial({ color: 0x1f3a5f })
     ));
+    (cfg.patches || []).forEach(function (pg) {
+      const pgeo = new THREE.ShapeGeometry(new THREE.Shape(pg.map(function (pt) { return new THREE.Vector2(pt[0] * SC, pt[1] * SC); })));
+      pgeo.rotateX(Math.PI / 2);
+      const pm = new THREE.Mesh(pgeo, new THREE.MeshStandardMaterial({ color: 0xcfe9f1, roughness: 1, side: THREE.DoubleSide }));
+      pm.position.y = 0.003;
+      scene.add(pm);
+    });
     (cfg.loops || []).forEach(function (lp) {
       scene.add(new THREE.LineLoop(
         new THREE.BufferGeometry().setFromPoints(lp.map(function (pt) { return new THREE.Vector3(pt[0] * SC, 0.004, pt[1] * SC); })),
@@ -1302,19 +1916,76 @@ try {
     cam: [10.5, 9.5, -2.0], target: [2.1, 0.9, 5.3], arrowX: 2.1
   });
 
-  // First floor: same axes as the ground floor. Window size is a placeholder until measured.
+  // First floor: same axes as the ground floor. The stairwell is marked flat at floor level with its treads outlined.
+  var fTreads = [
+    [[3100,3780],[3300,3780],[3300,4600],[3100,4600]],
+    [[3300,3780],[4200,3780],[4200,4190]], [[3300,3780],[4200,4190],[4200,4600]],
+    [[3300,3780],[4200,4600],[3750,4600]], [[3300,3780],[3750,4600],[3300,4600]]
+  ];
+  for (var z = 3780; z > 1830; z -= 250) fTreads.push([[3300,Math.max(z - 250, 1830)],[4200,Math.max(z - 250, 1830)],[4200,z],[3300,z]]);
   buildViewer(mounts[2], {
+    outline: [[0,0],[4200,0],[4200,1830],[3300,1830],[3300,3780],[3100,3780],[3100,4600],[4200,4600],[4200,6840],[0,6840]],
+    walls: [
+      { axis:'x', at:0, from:0, to:4200, out:-1, openings:[{a:655, b:2245, bottom:700, top:1900, kind:'win'}] },
+      { axis:'z', at:4200, from:0, to:6840, out:1 },
+      { axis:'x', at:6840, from:0, to:4200, out:1, openings:[
+          {a:500, b:1590, bottom:710, top:1880, kind:'win'},
+          {a:2647.5, b:3722.5, bottom:680, top:1860, kind:'win'}] },
+      { axis:'z', at:0, from:0, to:6840, out:-1 },
+      { axis:'x', at:1830, from:3300, to:4200, out:1 },
+      { axis:'z', at:3300, from:1830, to:3780, out:1 },
+      { axis:'x', at:3780, from:0, to:3300, out:0, openings:[{a:2170, b:2950, bottom:0, top:1980, kind:'door'}] },
+      { axis:'z', at:2020, from:3780, to:6840, out:1, t:150, openings:[{a:3780, b:4560, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:4600, from:2170, to:4200, out:1, t:70, openings:[{a:2170, b:2950, bottom:0, top:1980, kind:'door'}] }
+    ],
+    patches: [[[3300,1830],[4200,1830],[4200,4600],[3100,4600],[3100,3780],[3300,3780]]],
+    loops: fTreads,
+    blocks: [[185, 1220, 3245, 370, 2440, 1070]],
+    ceiling: 2440,
+    cam: [4.6, 9.4, -3.0], target: [2.1, 0, 3.3], arrowX: 2.1
+  });
+
+
+  // Bedroom 1: same axes as the first-floor plan.
+  buildViewer(mounts[6], {
     outline: [[0,0],[4200,0],[4200,1830],[3300,1830],[3300,3780],[370,3780],[370,2710],[0,2710]],
     walls: [
-      { axis:'x', at:0, from:0, to:4200, out:-1, openings:[{a:750, b:2550, bottom:900, top:2100, kind:'win'}] },
+      { axis:'x', at:0, from:0, to:4200, out:-1, openings:[{a:655, b:2245, bottom:700, top:1900, kind:'win'}] },
       { axis:'z', at:4200, from:0, to:1830, out:1 },
       { axis:'x', at:1830, from:3300, to:4200, out:1 },
       { axis:'z', at:3300, from:1830, to:3780, out:1 },
-      { axis:'x', at:3780, from:0, to:3300, out:1, openings:[{a:2120, b:2900, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:3780, from:0, to:3300, out:1, openings:[{a:2170, b:2950, bottom:0, top:1980, kind:'door'}] },
       { axis:'z', at:0, from:0, to:3780, out:-1 }
     ],
-    blocks: [[185, H / 2, 3245, 370, H, 1070]],
+    blocks: [[185, 1220, 3245, 370, 2440, 1070]],
+    ceiling: 2440,
     cam: [5.6, 5.0, -2.6], target: [1.9, 0.7, 1.9], arrowX: 2.1
+  });
+
+  // Bedroom 2: x = west of its east wall, z = north of its south wall.
+  buildViewer(mounts[4], {
+    outline: [[0,0],[2020,0],[2020,3060],[0,3060]],
+    walls: [
+      { axis:'x', at:0, from:0, to:2020, out:-1 },
+      { axis:'z', at:2020, from:0, to:3060, out:1, openings:[{a:0, b:780, bottom:0, top:1980, kind:'door'}] },
+      { axis:'x', at:3060, from:0, to:2020, out:1, openings:[{a:500, b:1590, bottom:710, top:1880, kind:'win'}] },
+      { axis:'z', at:0, from:0, to:3060, out:-1 }
+    ],
+    ceiling: 2440,
+    cam: [4.4, 4.8, -2.3], target: [1.0, 0.7, 1.5], arrowX: 1.0
+  });
+
+  // Bedroom 3: x = west of its east wall, z = north of its south wall.
+  buildViewer(mounts[5], {
+    outline: [[0,0],[2030,0],[2030,2170],[0,2170]],
+    walls: [
+      { axis:'x', at:0, from:0, to:2030, out:-1, openings:[{a:0, b:780, bottom:0, top:1980, kind:'door'}] },
+      { axis:'z', at:2030, from:0, to:2170, out:1 },
+      { axis:'x', at:2170, from:0, to:2030, out:1, openings:[{a:477.5, b:1552.5, bottom:680, top:1860, kind:'win'}] },
+      { axis:'z', at:0, from:0, to:2170, out:-1 }
+    ],
+    ceiling: 2440,
+    cam: [4.3, 4.4, -2.1], target: [1.0, 0.7, 1.1], arrowX: 1.0
   });
 } catch (e) {
   mounts.forEach(function (mt) {
@@ -1325,11 +1996,12 @@ try {
 
 <script>
 (function () {
-  var SC = 0.1, H = 2400;
+  var SC = 0.1;
 
   function fmt(mm) { return mm.toLocaleString('en-IE') + ' mm'; }
 
   function elevSVG(w) {
+    var H = w.ceil || 2400;
     var px = w.len * SC, py = H * SC, ox = 50, oy = 30, extPx = (w.ext || 0) * SC;
     var s = '<svg viewBox="0 0 ' + (px + extPx + 130) + ' ' + (py + 90) + '" style="max-width:' + (px + extPx + 130) + 'px" xmlns="http://www.w3.org/2000/svg">';
     function tick(x, y) { return '<line x1="' + (x - 4) + '" y1="' + (y + 4) + '" x2="' + (x + 4) + '" y2="' + (y - 4) + '" stroke="#6b7a90" stroke-width="1"/>'; }
@@ -1366,7 +2038,7 @@ try {
     });
     s += '<text x="' + (ox + px / 2) + '" y="' + (oy + py + 18) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600">' + w.len + '</text>';
     if (extPx) s += '<text x="' + (ox + px + extPx / 2) + '" y="' + (oy + py + 18) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600">' + w.ext + '</text>';
-    s += '<text x="' + (ox - 12) + '" y="' + (oy + py / 2) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600" transform="rotate(-90 ' + (ox - 12) + ' ' + (oy + py / 2) + ')">2400</text>';
+    s += '<text x="' + (ox - 12) + '" y="' + (oy + py / 2) + '" text-anchor="middle" font-size="11" fill="#6b7a90" font-weight="600" transform="rotate(-90 ' + (ox - 12) + ' ' + (oy + py / 2) + ')">' + H + '</text>';
     s += '<line x1="' + ox + '" y1="' + (oy + py + 6) + '" x2="' + (ox + px + extPx) + '" y2="' + (oy + py + 6) + '" stroke="#6b7a90" stroke-width="1"/>';
     if (extPx) s += tick(ox + px, oy + py + 6);
     s += '<line x1="' + (ox - 4) + '" y1="' + oy + '" x2="' + (ox - 4) + '" y2="' + (oy + py) + '" stroke="#6b7a90" stroke-width="1"/>';
@@ -1452,13 +2124,44 @@ try {
     kwest:  { name: 'West wall, left = south', len: 3800, feats: [
       { t: 'win', x: 980, w: 1680, sill: 1020, head: 2150, label: 'Window 2', side: 'right' } ] }
   } });
+
+  wireElev({ hits: 'b1hits', plan: 'b1plan', sheet: 'bed1', table: 'b1table', wrap: 'b1elev-wrap', title: 'b1elev-title', hint: 'b1elev-hint', mount: 'b1elev', walls: {
+    b1south: { name: 'South wall, left = east', len: 4200, ceil: 2440, feats: [
+      { t: 'win', x: 655, w: 1590, sill: 700, head: 1900, label: 'Window', side: 'left' } ] },
+    b1wests: { name: 'West wall, south section, left = south', len: 1830, ceil: 2440, feats: [] },
+    b1step:  { name: 'West wall step (stairwell behind), left = west', len: 900, ceil: 2440, feats: [] },
+    b1westn: { name: 'West wall, north section (stairwell behind), left = south', len: 1950, ceil: 2440, feats: [] },
+    b1north: { name: 'North wall (to landing), left = west', len: 2930, ceil: 2440, feats: [
+      { t: 'door', x: 350, w: 780, h: 1980, label: 'Door to Bedroom 1' } ] },
+    b1chimf: { name: 'Chimney breast, front, left = north', len: 1070, ceil: 2440, feats: [] },
+    b1chims: { name: 'Chimney breast, south side, left = west', len: 370, ceil: 2440, feats: [] },
+    b1east:  { name: 'East wall, left = north', len: 2710, ceil: 2440, feats: [] }
+  } });
+
+  wireElev({ hits: 'b2hits', plan: 'b2plan', sheet: 'bed2', table: 'b2table', wrap: 'b2elev-wrap', title: 'b2elev-title', hint: 'b2elev-hint', mount: 'b2elev', walls: {
+    b2south: { name: 'South wall, left = east', len: 2020, ceil: 2440, feats: [] },
+    b2east:  { name: 'East wall, left = north', len: 3060, ceil: 2440, feats: [] },
+    b2north: { name: 'North wall, left = west', len: 2020, ceil: 2440, feats: [
+      { t: 'win', x: 430, w: 1090, sill: 710, head: 1880, label: 'Window' } ] },
+    b2west:  { name: 'West wall, left = south', len: 3060, ceil: 2440, feats: [
+      { t: 'door', x: 0, w: 780, h: 1980, label: 'Door to Bedroom 2', side: 'right' } ] }
+  } });
+
+  wireElev({ hits: 'b3hits', plan: 'b3plan', sheet: 'bed3', table: 'b3table', wrap: 'b3elev-wrap', title: 'b3elev-title', hint: 'b3elev-hint', mount: 'b3elev', walls: {
+    b3south: { name: 'South wall, left = east', len: 2030, ceil: 2440, feats: [
+      { t: 'door', x: 0, w: 780, h: 1980, label: 'Door to Bedroom 3', side: 'right' } ] },
+    b3east:  { name: 'East wall, left = north', len: 2170, ceil: 2440, feats: [] },
+    b3north: { name: 'North wall, left = west', len: 2030, ceil: 2440, feats: [
+      { t: 'win', x: 477.5, w: 1075, sill: 680, head: 1860, label: 'Window' } ] },
+    b3west:  { name: 'West wall, left = south', len: 2170, ceil: 2440, feats: [] }
+  } });
 })();
 </script>
 <script>
 (function () {
   var HOUSE_DATA = {
     meta: {
-      description: "Measured floor plan of a house: the ground floor (upper room, Library and kitchen, all separate rooms) and the first-floor bedroom",
+      description: "Measured floor plan of a house: the ground floor (upper room, Library and kitchen, all separate rooms) and the first-floor bedrooms",
       units: "millimetres unless a key says otherwise",
       measurement_tolerance_mm: 20,
       ceiling_height: 2400,
@@ -1654,11 +2357,12 @@ try {
       ]
     },
     first_floor: {
-      ceiling_height: 2400,
-      ceiling_height_note: "Assumed the same as the ground floor; not yet measured",
-      coordinate_system: "Same x and y axes as the ground floor. The bedroom sits directly above the upper room.",
+      ceiling_height: 2440,
+      ceiling_height_note: "Measured. All first-floor rooms have coved ceilings; coving size not yet recorded.",
+      coordinate_system: "Same x and y axes as the ground floor. Bedroom 1 sits directly above the upper room; Bedrooms 2 and 3 and the landing sit north of it, above the Library. The first floor's north wall (y=6840) lines up with the Library's north wall (6850) within tolerance.",
+      layout_note: "Bedroom 2's east wall and Bedroom 3's west wall are the house's external walls. The leftover 150 (4200 - 2020 - 2030) is the wall between Bedroom 2 and the landing/Bedroom 3, and the leftover 70 (3060 - 820 - 2170) is the wall between the landing and Bedroom 3; both thicknesses are derived. Bedroom 1's north wall is drawn at zero thickness.",
       rooms: {
-        bedroom: {
+        bedroom_1: {
           position: "first floor, directly above the ground-floor upper room",
           usable_area_m2: 13.73,
           polygon_mm: [[0, 0], [4200, 0], [4200, 1830], [3300, 1830], [3300, 3780], [370, 3780], [370, 2710], [0, 2710]],
@@ -1680,7 +2384,9 @@ try {
             south: {
               total_east_to_west: 4200,
               segments_east_to_west: [
-                { length: 3300, note: "A large window is centred on this section; size, sill and head heights not yet measured" },
+                { length: 655, note: "wall, east wall to the window" },
+                { length: 1590, note: "window" },
+                { length: 1055, note: "wall, window to the west section (derived: 3300 - 655 - 1590)" },
                 { length: 900, note: "west section" }
               ]
             },
@@ -1692,22 +2398,99 @@ try {
             north: {
               total_east_to_west: 2930,
               segments_east_to_west: [
-                { length: 1750, note: "wall, chimney breast to door (derived: 2930 - 780 - 400)" },
-                { length: 780, note: "door opening (width assumed)" },
-                { length: 400, note: "wall, door to west wall" }
+                { length: 1800, note: "wall, chimney breast to door (derived: 2930 - 780 - 350)" },
+                { length: 780, note: "door opening onto the landing (standard width)" },
+                { length: 350, note: "wall, door to west wall (tape read 400; moved 50 west so the door lines up with the landing)" }
               ]
             },
             west_south_to_north: [
               { length: 1830, note: "wall, south wall to the step" },
               { length: 900, note: "step back east" },
-              { length: 1950, derived: true, note: "wall, step to the north wall: 3780 - 1830. To be confirmed with a tape." }
+              { length: 1950, note: "wall, step to the north wall (3780 - 1830, confirmed)" }
             ]
           },
-          door: { name: "bedroom door", wall: "north", width: 780, width_assumed: true, hinge: "west jamb", opens: "into the bedroom (swings south)", offset_from_west_wall: 400 },
-          window: { wall: "south", position: "centred on the 3300 wall", width: null, sill_height_above_floor: null, head_height_above_floor: null, note: "To be measured" }
+          door: { name: "Bedroom 1 door", wall: "north", width: 780, height: 1980, hinge: "west jamb", opens: "from the landing into Bedroom 1 (swings south)", offset_from_west_wall: 350, offset_adjusted_from: 400 },
+          window: { wall: "south", width: 1590, height: 1200, sill_height_above_floor: 700, head_height_above_floor: 1900, offset_from_east_wall: 655, offset_from_west_wall: 1955 }
+        },
+        bedroom_2: {
+          position: "north-east of the first floor, north of Bedroom 1, entered from the landing",
+          area_m2: 6.18,
+          polygon_mm: [[0, 3780], [2020, 3780], [2020, 6840], [0, 6840]],
+          width_east_to_west: 2020,
+          depth_north_to_south: 3060,
+          local_coordinate_system: "x = distance west of this room's east wall, y = distance north of its south wall",
+          local_polygon_mm: [[0, 0], [2020, 0], [2020, 3060], [0, 3060]],
+          walls: {
+            south: { length: 2020 },
+            east: { length: 3060 },
+            north: {
+              total: 2020,
+              segments_east_to_west: [
+                { length: 500, note: "wall" },
+                { length: 1090, note: "window" },
+                { length: 430, note: "wall" }
+              ]
+            },
+            west: {
+              total: 3060,
+              segments_south_to_north: [
+                { length: 780, note: "door opening, standard width" },
+                { length: 2280, derived: true, note: "wall; tape read 2300, 2280 fits the standard 780 door within the 3060 room depth" }
+              ]
+            }
+          },
+          door: { name: "Bedroom 2 door", wall: "west", position: "south end of the west wall", width: 780, height: 1980, hinge: "north jamb", opens: "into Bedroom 2 (leaf swings east into the room)" },
+          window: { wall: "north", width: 1090, height: 1170, sill_height_above_floor: 710, head_height_above_floor: 1880, offset_from_east_wall: 500, offset_from_west_wall: 430, note: "Sketch side note said 104 cm wide; 1090 confirmed as it matches the 500 + 1090 + 430 chain" }
+        },
+        bedroom_3: {
+          position: "north-west of the first floor, north of the landing and stairs, entered from the landing",
+          area_m2: 4.41,
+          polygon_mm: [[2170, 4670], [4200, 4670], [4200, 6840], [2170, 6840]],
+          width_east_to_west: 2030,
+          depth_north_to_south: 2170,
+          local_coordinate_system: "x = distance west of this room's east wall, y = distance north of its south wall",
+          local_polygon_mm: [[0, 0], [2030, 0], [2030, 2170], [0, 2170]],
+          walls: {
+            south: {
+              total: 2030,
+              segments_east_to_west: [
+                { length: 780, note: "door opening, standard width" },
+                { length: 1250, derived: true, note: "wall; tape read 1240, 1250 fits the standard 780 door within the 2030 room width" }
+              ]
+            },
+            east: { length: 2170 },
+            north: {
+              total: 2030,
+              segments_east_to_west: [
+                { length: 477.5, note: "wall" },
+                { length: 1075, note: "window (centred)" },
+                { length: 477.5, note: "wall" }
+              ]
+            },
+            west: { length: 2170 }
+          },
+          door: { name: "Bedroom 3 door", wall: "south", position: "east end of the south wall", width: 780, height: 1980, hinge: "east jamb", opens: "into Bedroom 3 (open leaf lies along the east wall)" },
+          window: { wall: "north", position: "centred", width: 1075, height: 1180, sill_height_above_floor: 680, head_height_above_floor: 1860, offset_from_east_wall: 477.5, offset_from_west_wall: 477.5 }
+        },
+        landing: {
+          position: "between Bedroom 1 (south), Bedroom 2 (east) and Bedroom 3 (north); open to the stairs on its west side",
+          area_m2: 0.76,
+          width_east_to_west: 930,
+          depth_north_to_south: 820,
+          polygon_mm: [[2170, 3780], [3100, 3780], [3100, 4600], [2170, 4600]],
+          doors: ["Bedroom 1 door (south side)", "Bedroom 2 door (east side)", "Bedroom 3 door (north side)"]
         }
       },
-      pending_measurements: ["south window size and heights", "west wall 1950 (derived)", "door width (assumed 780)", "first-floor ceiling height (assumed 2400)"]
+      internal_walls: {
+        bedroom_2_to_landing_and_bedroom_3: { thickness: 150, derived: true, runs: "north-south at x=2020 to 2170, from y=3780 to 6840", note: "4200 - 2020 - 2030" },
+        landing_to_bedroom_3: { thickness: 70, derived: true, runs: "east-west at y=4600 to 4670, from x=2170 to 4200", note: "3060 - 820 - 2170" }
+      },
+      stairs: {
+        route_going_up: "rise north along the 900 west strip (x=3300 to 4200), turn at its north end (y=3780 to 4600), then one step east (x=3100 to 3300) onto the landing",
+        stairwell_polygon_mm: [[3300, 1830], [4200, 1830], [4200, 4600], [3100, 4600], [3100, 3780], [3300, 3780]],
+        note: "The 200 step between the landing and the turn is derived (3300 - 3100)"
+      },
+      pending_measurements: ["coving profile (all first-floor rooms)"]
     }
   };
 
@@ -1749,6 +2532,9 @@ try {
   wireCopy('copyjson', HOUSE_DATA, 'Copy measurements JSON');
   wireCopy('copymjson', roomData('library', 'Library'), 'Copy Library JSON');
   wireCopy('copykjson', roomData('kitchen', 'kitchen'), 'Copy kitchen JSON');
+  wireCopy('copyb1json', { meta: HOUSE_DATA.meta, ceiling_height: HOUSE_DATA.first_floor.ceiling_height, ceiling_height_note: HOUSE_DATA.first_floor.ceiling_height_note, room: HOUSE_DATA.first_floor.rooms.bedroom_1 }, 'Copy Bedroom 1 JSON');
+  wireCopy('copyb2json', { meta: HOUSE_DATA.meta, ceiling_height: HOUSE_DATA.first_floor.ceiling_height, ceiling_height_note: HOUSE_DATA.first_floor.ceiling_height_note, room: HOUSE_DATA.first_floor.rooms.bedroom_2 }, 'Copy Bedroom 2 JSON');
+  wireCopy('copyb3json', { meta: HOUSE_DATA.meta, ceiling_height: HOUSE_DATA.first_floor.ceiling_height, ceiling_height_note: HOUSE_DATA.first_floor.ceiling_height_note, room: HOUSE_DATA.first_floor.rooms.bedroom_3 }, 'Copy Bedroom 3 JSON');
 })();
 </script>
 </body>
